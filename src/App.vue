@@ -49,21 +49,78 @@
       this.submittals = [
         {
           id: 1,
-          submittalID: 'Submittal 1',
-          needDate: 'asdfasd date 1',
-          priority: true,
+          submittalID: 'SUB-MIT-0001',
+          description: 'This is a submittal with things',
+          needDate: '8/3/2018',
+          receivedDate: '6/5/2021',
+          dispositionDate: '10/4/2021',
+          stakeholders: [
+            {
+              id: 1,
+              name: 'Bob Bobberson',
+              organization: 'Design',              
+              requestedDate: '5/5/2020',
+              completedDate: '6/6/2021'
+            },
+            {              
+              id: 2,
+              name: 'Bill Billerson',
+              organization: 'Materials',              
+              requestedDate: '1/5/2020',
+              completedDate: '6/30/2021'
+            },
+          ],
+          priority: true
         },
         {
           id: 2,
-          submittalID: 'Submittal 2',
-          needDate: 'asdfasd date 2',
-          priority: false,
+          submittalID: 'SUB-MIT-0002',
+          description: 'This is a submittal with other things',
+          needDate: '10/4/2021',
+          receivedDate: '1/4/2019',
+          dispositionDate: '10/4/2021',
+          stakeholders: [
+            {
+              id: 1,
+              name: 'Matt Matterson',
+              organization: 'Design',              
+              requestedDate: '2/5/2020',
+              completedDate: '6/10/2021'
+            },
+            {
+              id: 2,
+              name: 'Nick Nickelson',
+              organization: 'Materials',              
+              requestedDate: '1/5/1920',
+              completedDate: null
+            },
+          ],
+          priority: true
         },
         {
           id: 3,
-          submittalID: 'Submittal 3',
-          needDate: 'asdfasd date 3',
-          priority: false,
+          submittalID: 'SUB-MIT-0001',
+          description: 'This is a submittal with more other things',
+          needDate: '1/4/2022',
+          receivedDate: '8/4/2021',
+          dispositionDate: null,
+          stakeholders: [
+            {              
+              id: 1,
+              name: 'Bob Bobberson',
+              organization: 'Design',              
+              requestedDate: '5/5/2020',
+              completedDate: '6/6/2021'
+            },
+            {
+              id: 2,
+              name: 'Bill Billerson',
+              organization: 'Materials',              
+              requestedDate: '1/5/2020',
+              completedDate: null
+            },
+          ],
+          priority: true
         }
       ]
     }
@@ -81,7 +138,6 @@
     font-family: 'Poppins', sans-serif;
   }
   .container {
-    max-width: 500px;
     margin: 30px auto;
     overflow: auto;
     min-height: 300px;
