@@ -1,0 +1,42 @@
+// src/sass/variables.scss
+
+// Globals
+@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+// @import '~/assets/fonts/Quicksand-VariableFont_wght.ttf';
+
+$body-font-family: 'Quicksand', sans-serif;
+$title-font: 'Quicksand', sans-serif;
+$border-radius-root: 6px;
+$font-size-root: 14px;
+
+// Variables must come before the import
+$btn-letter-spacing: 0;
+$btn-font-weight: 400;
+$list-item-title-font-size: 1.0rem;
+$list-item-dense-title-font-size: 1.0rem;
+$list-item-dense-title-font-weight: initial;
+$list-dense-min-height: 10px !default;
+$list-item-min-height: 10px !default;
+$list-item-two-line-min-height: 10px !default;
+$list-dense-subheader-height: 10px !default;
+$list-padding: 5px !default;
+$list-item-padding: 0px !default;
+$list-subheader-padding-top: 0px;
+$fab-icon-sizes: (
+  'small': 20
+);
+$btn-sizes: (
+  'default': 41,
+  'large': 54
+);
+
+$headings: (
+  'h1': (
+    'size': 3.3125rem,
+    'line-height': 1.15em
+  ),
+  'h2': (
+    'size': 2.25rem,
+    'line-height': 1.5em
+  )
+);
