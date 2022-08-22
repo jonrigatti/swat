@@ -12,10 +12,16 @@ module.exports = mongoose => {
                     }
                 ],
                 prioritySubmittals: [
-                    { type: Schema.Types.ObjectId, ref: 'submittal' }
+                    {
+                        submittal: { type: Schema.Types.ObjectId, ref: 'submittal' },
+                        driver: String                        
+                    }
                 ],
                 unrankedSubmittals: [
-                    { type: Schema.Types.ObjectId, ref: 'submittal' }
+                    {
+                        submittal: { type: Schema.Types.ObjectId, ref: 'submittal' },
+                        driver: String                        
+                    }
                 ]
             },
             { timestamps: true }

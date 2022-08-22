@@ -201,7 +201,8 @@
                           <div>Contract: {{ item.contract }}</div>
                           <div>
                             Priority:
-                            <span v-for="project in projects" :key="project" v-show="project.prioritySubmittals.findIndex(submittal => { return submittal._id === item._id }) != -1">
+                            <!-- v-show="project.prioritySubmittals.findIndex(submittal => { return submittal._id === item._id }) != -1" -->
+                            <span v-for="project in projects" :key="project" v-show="project.prioritySubmittals.findIndex(s => { return s.submittal._id === item._id }) != -1">
                                 <v-menu
                                   offset-y
                                 >
@@ -211,13 +212,13 @@
                                       v-bind="attrs"
                                       v-on="on"
                                     >
-                                      {{ project.name }} - {{ project.prioritySubmittals.findIndex(submittal => { return submittal._id === item._id }) + 1}}
+                                      {{ project.name }} - {{ project.prioritySubmittals.findIndex(s => { return s.submittal._id === item._id }) + 1}}
                                     </v-btn>
                                   </template>
                                     <v-card>
                                       <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" handle=".handle" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
-                                        <v-col v-for="(submittal, index) in project.prioritySubmittals" :key="submittal" :class="submittal.submittalID === item.submittalID ? 'item draggable-item handle' : 'item'">
-                                          {{ index + 1 }}. {{submittal.submittalID}}
+                                        <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal" :class="s.submittal.submittalID === item.submittalID ? 'item draggable-item handle' : 'item'">
+                                          {{ index + 1 }}. {{s.submittal.submittalID}}
                                         </v-col>
                                       </draggable>
                                     </v-card>
@@ -255,8 +256,8 @@
           <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
             <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
               <v-card-subtitle slot="header">Priority Submittals</v-card-subtitle>
-              <v-col v-for="(submittal, index) in project.prioritySubmittals" :key="submittal.submittalID" class="item draggable-item">
-                {{ index + 1 }}. {{submittal.submittalID }} - {{ submittal.description }}
+              <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittalID" class="item draggable-item">
+                {{ index + 1 }}. {{s.submittal.submittalID }} - {{ s.submittal.description }} - {{ s.driver }}
               </v-col>
             <!-- </transition-group> -->
           </draggable>
@@ -266,8 +267,8 @@
           <draggable v-model="project.unrankedSubmittals" :group="project.name + 'Submittals'" draggable=".item" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
             <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
               <v-card-subtitle slot="header">Unranked Submittals</v-card-subtitle>
-              <v-col v-for="submittal in project.unrankedSubmittals" :key="submittal.submittalID" class="item draggable-item">
-                {{ submittal.submittalID }} - {{ submittal.description }}
+              <v-col v-for="s in project.unrankedSubmittals" :key="s.submittal.submittalID" class="item draggable-item">
+                {{ s.submittal.submittalID }} - {{ s.submittal.description }}
               </v-col>
             <!-- </transition-group> -->
           </draggable>

@@ -35,8 +35,8 @@ exports.findAll = (req, res) => {
     console.log('Find all projects');
 
     Projects.find({})
-    .populate('prioritySubmittals', 'submittalID description needDate')
-    .populate('unrankedSubmittals', 'submittalID description needDate')    
+    .populate('prioritySubmittals.submittal', 'submittalID description needDate')
+    .populate('unrankedSubmittals.submittal', 'submittalID description needDate')    
     // .populate('unrankedSubmittals', ['submittalID', 'description', 'needDate'])
     .then(data => {
         console.log(JSON.stringify(data));
