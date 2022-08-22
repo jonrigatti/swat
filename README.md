@@ -1,19 +1,6 @@
-# swat
-
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+![Search](/screenshots/search.png?raw=true "Search")
+![Filter](/screenshots/filter.png?raw=true "Filter")
+![Violations](/screenshots/violations.png?raw=true "Violations")
+![Priority1](/screenshots/priority1.png?raw=true "Priority1")
+![Priority2](/screenshots/priority2.png?raw=true "Priority2")
+![Table](/screenshots/tableview.png?raw=true "Table View")
