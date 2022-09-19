@@ -22,8 +22,17 @@ app.get("/", (req, res) => {
     res.json({ message: "Welcome to the thing." });
 });
 
+// app.get("/testdir", (req, res) => {
+//         fs.mkdir(path.join(__dirname, "/test"), {}, (err) => {
+//             if (err) throw err;
+//             console.log("folder created ...");
+//         });
+//         res.json({ message: "Test directory created." });
+// });
+
 require("./routes/submittal.routes")(app);
 require("./routes/projects.routes")(app);
+require("./routes/server.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

@@ -235,6 +235,18 @@
                           >
                             <v-icon>mdi-content-save-edit</v-icon>
                           </v-btn>
+                          <v-btn
+                            icon
+                            @click="createSDF(item)"
+                          >
+                            <v-icon>mdi-archive-plus</v-icon>
+                          </v-btn>
+                          <v-btn
+                            icon
+                            @click="createPDF(item)"
+                          >
+                            <v-icon>mdi-file-pdf-box</v-icon>
+                          </v-btn>
                         </v-card-actions>
                     </v-card>
                   </v-col>
@@ -346,7 +358,7 @@ export default {
     submittals: Array,
     projects: Array
   },
-  data () {
+  data(){
     return {
       itemsPerPageArray: [4, 8, 12],
       search: '',
@@ -499,30 +511,30 @@ export default {
     }
   },
   computed: {
-    numberOfPages () {
+    numberOfPages(){
       return Math.ceil(this.items.length / this.itemsPerPage)
     },
-    filteredKeys () {
+    filteredKeys(){
       return this.keys.filter(key => key !== 'Name')
     },
-    filteredSubmittals() {
+    filteredSubmittals(){
       var myArray = this.submittals;
       var myFilter = this.filter;
-      // for(const key in myFilter) {
+      // for(const key in myFilter){
       //   console.log(key)
       // }
 
-      return myArray.filter(function(s) {
+      return myArray.filter(function(s){
         var boolArray = []
-        for(const key in myFilter) {
-          boolArray.push(myFilter[key].some(function(i) {
+        for(const key in myFilter){
+          boolArray.push(myFilter[key].some(function(i){
             return s[key] === i
           }))
         }
         return boolArray.some(b => b)
       })      
     },
-    allSelected() {
+    allSelected(){
       if(this.filter.coreType == this.coreType)
       {
         return true
@@ -533,22 +545,22 @@ export default {
     }
   },
   methods: {
-    save () {
+    save(){
       this.snack = true
       this.snackColor = 'success'
       this.snackText = 'Data saved'
     },
-    cancel () {
+    cancel(){
       this.snack = true
       this.snackColor = 'error'
       this.snackText = 'Canceled'
     },
-    open () {
+    open(){
       this.snack = true
       this.snackColor = 'info'
       this.snackText = 'Dialog opened'
     },
-    close () {
+    close(){
       console.log('Dialog closed')
     },
     selectAllNone(prop, allNone)
@@ -564,34 +576,41 @@ export default {
         this.filter.prop = []
       }
     },
-    saveSubmittal (submittal) {
+    saveSubmittal(submittal){
       // console.log('Submittals: ' + JSON.stringify(submittal))
       this.$emit('update-submittal', submittal)
     },
-    addViolation (violation, index) {
+    addViolation(violation, index){
       this.submittals.find(submittal => submittal._id === this.filteredSubmittals[index]._id).violations.push(violation)
     },
-    addQueryField () {
-      if(this.queryFields.length == 0 || this.queryFields[this.queryFields.length - 1].value != '') {
+    addQueryField(){
+      if(this.queryFields.length == 0 || this.queryFields[this.queryFields.length - 1].value != ''){
         this.queryFields.push({ key: '', value: '', andOr: 'and', operator: '$eq' })
       }
     },
-    deleteQueryField (index) {
+    deleteQueryField(index){
       console.log('Index: ' + index)
       console.log(this.queryFields)
       this.queryFields.splice(index, 1)      
       console.log(this.queryFields)
     },
-    getDynamicQuery() {
+    getDynamicQuery(){
       this.$emit('dynamic-query', this.queryFields)
     },
-    sortedItems(items, sortKeys) {
+    sortedItems(items, sortKeys){
       return _.sortBy(items, sortKeys)
     },
-    sortUpdate(project) {
+    sortUpdate(project){
       console.log('priority: ' + JSON.stringify(project.prioritySubmittals))
       console.log('unranked: ' + JSON.stringify(project.unrankedSubmittals))
       this.$emit('update-submittal-priorities', project)
+    },
+    createSDF(submittal){
+      // console.log('Submittals: ' + JSON.stringify(submittal))
+      this.$emit('create-SDF', submittal)
+    },
+    createPDF(submittal){
+      this.$emit('create-PDF', submittal)
     }
   },
   components: {
@@ -599,7 +618,7 @@ export default {
     Violations,
     draggable
   },
-  emits: ["delete-submittal", "update-submittal","dynamic-query"]
+  emits: ["delete-submittal", "update-submittal","dynamic-query", "create-SDF", "create-PDF"]
 };
 </script>
 

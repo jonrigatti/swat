@@ -5,10 +5,6 @@ class SubmittalDataService {
         return http.get("/submittals");
     }
 
-    getAllProjects() {
-        return http.get("/projects");
-    }
-
     getOpen() {
         return http.get("/submittals/open");
     }

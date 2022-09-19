@@ -2,7 +2,7 @@
   <div id="app">
     <v-app dark>
       <Header title="Submittal Workflow and Tracking" @toggle-add-submittal="toggleAddSubmittal" :showAddSubmittal="showAddSubmittal" />
-      <Submittals :submittals="submittals" :projects="projects" @delete-submittal="deleteSubmittal" @update-submittal="updateSubmittal" @update-submittal-priorities="updateSubmittalPriorities" @dynamic-query="getDynamicQuery" />
+      <Submittals :submittals="submittals" :projects="projects" @delete-submittal="deleteSubmittal" @update-submittal="updateSubmittal" @update-submittal-priorities="updateSubmittalPriorities" @dynamic-query="getDynamicQuery" @create-SDF="createSDF" @create-PDF="createPDF"/>
     </v-app>
   </div>
 </template>
@@ -12,6 +12,7 @@
   import Submittals from './components/Submittals'
   import SubmittalDataService from './services/SubmittalDataService'
   import ProjectDataService from './services/ProjectDataService'
+  import ServerDataService from './services/ServerDataService'
 
   export default {
     name: 'App',
@@ -149,10 +150,38 @@
               console.log(e);
             });
         },
+      testDirectory() {
+          ServerDataService.testDir()
+            .then(response => {
+              console.log(response.data);
+            })
+            .catch(e => {
+              console.log(e);
+            });
+        },
+      createSDF(submittal) {
+          ServerDataService.createSDF(submittal._id, submittal)
+            .then(response => {
+              console.log(response.data);
+            })
+            .catch(e => {
+              console.log(e);
+            });
+        },
+      createPDF(submittal) {
+          ServerDataService.createPDF(submittal._id, submittal)
+            .then(response => {
+              console.log(response.data);
+            })
+            .catch(e => {
+              console.log(e);
+            });
+        }
     },
     created() {
       this.getSubmittals();
       this.getProjects();
+      // Edge setting to allow local links: https://docs.microsoft.com/en-us/deployedge/microsoft-edge-policies#intranetfilelinksenabled
       // this.getClosedSubmittals();
       // this.getSubmittalsByOwner('Blaherson');
       // this.getSubmittalsByViolation('Hockey');
