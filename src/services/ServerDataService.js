@@ -22,6 +22,15 @@ class ServerDataService {
             console.log(response);
         });
     }
+        
+    mergePDF(id, data) {
+        console.log('PDF merging: ' + JSON.stringify(data));
+        return http.put(`/server/mergePDF/${id}`, data)
+        .then(function (response) {
+            console.log('Then: ' + JSON.stringify(data));
+            console.log(response);
+        });
+    }
 }
 
 export default new ServerDataService();

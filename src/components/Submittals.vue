@@ -1,13 +1,5 @@
 <template>
   <div>
-    <!-- <div :key="submittal.id" v-for="submittal in submittals">
-      <Submittal
-        :submittal="submittal"
-        @delete-submittal="$emit('delete-submittal', submittal.id)"
-        @toggle-priority="$emit('toggle-priority', submittal.id)"
-      />
-    </div> -->
-
     <template>
       <v-container fluid>
         <v-row>
@@ -101,7 +93,7 @@
                 </v-toolbar>
                 <v-toolbar dark color="blue darken-3" class="mb-1">
                   <v-btn-toggle
-                    v-model="filter.coreType"
+                    v-model="submittalFilter.coreType"
                     dense
                     background-color="primary"
                     dark
@@ -119,19 +111,19 @@
                   <v-btn
                     dense
                     color="red darken-3"
-                    @click="() => filter.coreType = coreTypes"
+                    @click="() => submittalFilter.coreType = coreTypes"
                   >
                     All
                   </v-btn>                
                   <v-btn
                     dense
                     color="red darken-3"
-                    @click="() => filter.coreType = []"
+                    @click="() => submittalFilter.coreType = []"
                   >
                     None
                   </v-btn>
                   <v-btn-toggle
-                    v-model="filter.owner"
+                    v-model="submittalFilter.owner"
                     dense
                     background-color="primary"
                     dark
@@ -146,8 +138,9 @@
                       {{ owner }}
                     </v-btn>
                   </v-btn-toggle>
-                  {{ filter.coreType }}
-                  {{ filter.owner }}
+                  {{ submittalFilter.coreType }}
+                  {{ submittalFilter.owner }}
+                  {{ sortDesc }}
                 </v-toolbar>
               </template>
 
@@ -202,7 +195,8 @@
                           <div>
                             Priority:
                             <!-- v-show="project.prioritySubmittals.findIndex(submittal => { return submittal._id === item._id }) != -1" -->
-                            <span v-for="project in projects" :key="project" v-show="project.prioritySubmittals.findIndex(s => { return s.submittal._id === item._id }) != -1">
+
+                            <span v-for="project in projects.projects" :key="project" v-show="project.prioritySubmittals.findIndex(s => { return s.submittal._id === item._id }) != -1">
                                 <v-menu
                                   offset-y
                                 >
@@ -247,6 +241,12 @@
                           >
                             <v-icon>mdi-file-pdf-box</v-icon>
                           </v-btn>
+                          <v-btn
+                            icon
+                            @click="mergePDF(item)"
+                          >
+                            <v-icon>mdi-vector-combine</v-icon>
+                          </v-btn>
                         </v-card-actions>
                     </v-card>
                   </v-col>
@@ -258,7 +258,7 @@
       </v-container>
     </template>
 
-    <v-card v-for="project in projects" :key="project.name" class="pa-2 ma-2" width="500">
+    <v-card v-for="project in projects.projects" :key="project.name" class="pa-2 ma-2" width="500">
       <v-card-title>{{project.name}}</v-card-title>
       <v-container fluid>
       <v-row>
@@ -345,281 +345,318 @@
   </div>
 </template>
 
-<script>
-/* eslint-disable */
-// import Submittal from "./Submittal.vue";
-import Violations from "./Violations.vue";
-import _ from 'lodash';
-import draggable from 'vuedraggable';
 
-export default {
-  name: "Submittals",
-  props: {
-    submittals: Array,
-    projects: Array
-  },
-  data(){
-    return {
-      itemsPerPageArray: [4, 8, 12],
-      search: '',
-      filter: {
-        coreType: [],
-        owner: []
-      },
-      sortDesc: false,
-      page: 1,
-      itemsPerPage: 10,
-      sortBy: '',
-      keys: [
-        'Submittal ID',
-        'Need Date',
-      ],
-      expanded: [],
-      singleExpand: false,
-      snack: false,
-      snackColor: '',
-      snackText: '',
-      max25chars: v => v.length <= 25 || 'Input too long!',
-      pagination: {},
-      // items: [
-      // 'Blah',
-      // 'Bobloblaw',
-      // 'Meh'
-      // ],
-      headers: [
-        {
-          text: 'Submittal',
-          align: 'start',
-          value: 'submittalID',
-        },
-        { text: 'Need Date', value: 'needDate' },
-        { text: 'Owner', value: 'owner' },
-        { text: 'Priority', value: 'priority' },
-        { text: '', value: 'data-table-expand' }
-      ],
-      coreTypes: [
-        'A',
-        'B',
-        'C',
-        'D'
-      ],
-      owners: [
-        'Blahsievsky',
-        'Blaherson',
-        'McBlah',
-      ],
-      queryFields: [],
-      queryKeyOptions: [        
-        {
-          text: "Submittal ID",
-          value: {
-            name: "submittalID",
-            type: "String"
-            }
-        },
-        {
-          text: "Submittal description",
-          value: {
-            name: "description",
-            type: "String"
-            }
-        },
-        {
-          text: "Submittal need date",
-          value: {
-            name: "needDate",
-            type: "Date"
-            }
-        },
-        {
-          text: "Submittal received date",
-          value: {
-            name: "receivedDate",
-            type: "Date"
-            }
-        },
-        {
-          text: "Submittal disposition date",
-          value: {
-            name: "dispositionDate",
-            type: "Date"
-            }
-        },
-        {
-          text: "Submittal owner",
-          value: {
-            name: "owner",
-            type: "String"
-            }
-        },
-        {
-          text: "Violation category",
-          value: {
-            name: "violations.category",
-            type: "String"
-            }
-        },
-        {
-          text: "Violation limit",
-          value: {
-            name: "violations.limit",
-            type: "Number"
-            }
-        },
-        {
-          text: "Violation actual",
-          value: {
-            name: "violations.actual",
-            type: "Number"
-            }
-        },
-        {
-          text: "Violation reference",
-          value: {
-            name: "violations.reference",
-            type: "String"
-            }
-        }
-      ],
-      queryOperatorOptions: [        
-        {
-          text: "=",
-          value: "$eq"
-        },
-        {
-          text: ">",
-          value: "$gt"
-        },
-        {
-          text: ">=",
-          value: "$gte"
-        },
-        {
-          text: "<",
-          value: "$lt"
-        },
-        {
-          text: "<=",
-          value: "$lte"
-        },
-        {
-          text: "!=",
-          value: "$ne"
-        }
-      ],
-      drag: false
-    }
-  },
-  computed: {
-    numberOfPages(){
-      return Math.ceil(this.items.length / this.itemsPerPage)
-    },
-    filteredKeys(){
-      return this.keys.filter(key => key !== 'Name')
-    },
-    filteredSubmittals(){
-      var myArray = this.submittals;
-      var myFilter = this.filter;
-      // for(const key in myFilter){
-      //   console.log(key)
-      // }
+<!-- https://terabytetiger.com/lessons/moving-from-vue-2-to-vue-3-composition-api -->
+<script setup>
+  /* eslint-disable */
+  // import Submittal from './Submittal.vue';
+  import Violations from './Violations.vue';
+  import _ from 'lodash';
+  import draggable from 'vuedraggable';
+  import { useSubmittalsStore } from '../stores/SubmittalsStore'
+  import { useProjectsStore } from '../stores/ProjectsStore'
+  import ServerDataService from '../services/ServerDataService'
+  import { ref, computed } from 'vue'
 
-      return myArray.filter(function(s){
-        var boolArray = []
-        for(const key in myFilter){
-          boolArray.push(myFilter[key].some(function(i){
-            return s[key] === i
-          }))
-        }
-        return boolArray.some(b => b)
-      })      
-    },
-    allSelected(){
-      if(this.filter.coreType == this.coreType)
-      {
-        return true
-      }
-      else {
-        return false
-      }
-    }
-  },
-  methods: {
-    save(){
-      this.snack = true
-      this.snackColor = 'success'
-      this.snackText = 'Data saved'
-    },
-    cancel(){
-      this.snack = true
-      this.snackColor = 'error'
-      this.snackText = 'Canceled'
-    },
-    open(){
-      this.snack = true
-      this.snackColor = 'info'
-      this.snackText = 'Dialog opened'
-    },
-    close(){
-      console.log('Dialog closed')
-    },
-    selectAllNone(prop, allNone)
+  const submittals = useSubmittalsStore();
+  submittals.getSubmittals();
+
+  const projects = useProjectsStore();
+  projects.getProjects();
+
+  console.log(JSON.stringify(projects.projects));
+
+  // Data
+  const itemsPerPageArray = [4, 8, 12];
+  const search = ref('');
+  const submittalFilter = ref({
+    coreType: [],
+    owner: []
+  });
+  const sortDesc = ref(false);
+  const page = ref(1);
+  const itemsPerPage = ref(10);
+  const sortBy = ref('submittalID');
+  const keys = [
+    { text: 'Submittal ID', value: 'submittalID' },
+    { text: 'Need Date', value: 'needDate' },
+    { text: 'Owner', value: 'owner' },
+    { text: 'Contract', value: 'contract' }
+  ];
+  const expanded = ref([]);
+  const singleExpand = ref(false);
+  const snack = ref(false);
+  const snackColor = ref('');
+  const snackText = ref('');
+  const max25chars = v => v.length <= 25 || 'Input too long!';
+  const pagination = ref({});
+  // items: [
+  // 'Blah',
+  // 'Bobloblaw',
+  // 'Meh'
+  // ],
+  const headers = [
     {
-      if(allNone = "all")
-      {
-        this.filter[prop] = prop
-        // console.log(prop)
-        // console.log(this.filter[prop])     
-      }
-      else
-      {
-        this.filter.prop = []
-      }
+      text: 'Submittal',
+      align: 'start',
+      value: 'submittalID',
     },
-    saveSubmittal(submittal){
-      // console.log('Submittals: ' + JSON.stringify(submittal))
-      this.$emit('update-submittal', submittal)
+    { text: 'Need Date', value: 'needDate' },
+    { text: 'Owner', value: 'owner' },
+    { text: 'Priority', value: 'priority' },
+    { text: '', value: 'data-table-expand' }
+  ];
+  const coreTypes = [
+    'A',
+    'B',
+    'C',
+    'D'
+  ];
+  const owners = [
+    'Blahsievsky',
+    'Blaherson',
+    'McBlah',
+  ];
+  const queryFields = ref([]);
+  const queryKeyOptions = [        
+    {
+      text: 'Submittal ID',
+      value: {
+        name: 'submittalID',
+        type: 'String'
+        }
     },
-    addViolation(violation, index){
-      this.submittals.find(submittal => submittal._id === this.filteredSubmittals[index]._id).violations.push(violation)
+    {
+      text: 'Submittal description',
+      value: {
+        name: 'description',
+        type: 'String'
+        }
     },
-    addQueryField(){
-      if(this.queryFields.length == 0 || this.queryFields[this.queryFields.length - 1].value != ''){
-        this.queryFields.push({ key: '', value: '', andOr: 'and', operator: '$eq' })
-      }
+    {
+      text: 'Submittal need date',
+      value: {
+        name: 'needDate',
+        type: 'Date'
+        }
     },
-    deleteQueryField(index){
-      console.log('Index: ' + index)
-      console.log(this.queryFields)
-      this.queryFields.splice(index, 1)      
-      console.log(this.queryFields)
+    {
+      text: 'Submittal received date',
+      value: {
+        name: 'receivedDate',
+        type: 'Date'
+        }
     },
-    getDynamicQuery(){
-      this.$emit('dynamic-query', this.queryFields)
+    {
+      text: 'Submittal disposition date',
+      value: {
+        name: 'dispositionDate',
+        type: 'Date'
+        }
     },
-    sortedItems(items, sortKeys){
-      return _.sortBy(items, sortKeys)
+    {
+      text: 'Submittal owner',
+      value: {
+        name: 'owner',
+        type: 'String'
+        }
     },
-    sortUpdate(project){
-      console.log('priority: ' + JSON.stringify(project.prioritySubmittals))
-      console.log('unranked: ' + JSON.stringify(project.unrankedSubmittals))
-      this.$emit('update-submittal-priorities', project)
+    {
+      text: 'Violation category',
+      value: {
+        name: 'violations.category',
+        type: 'String'
+        }
     },
-    createSDF(submittal){
-      // console.log('Submittals: ' + JSON.stringify(submittal))
-      this.$emit('create-SDF', submittal)
+    {
+      text: 'Violation limit',
+      value: {
+        name: 'violations.limit',
+        type: 'Number'
+        }
     },
-    createPDF(submittal){
-      this.$emit('create-PDF', submittal)
+    {
+      text: 'Violation actual',
+      value: {
+        name: 'violations.actual',
+        type: 'Number'
+        }
+    },
+    {
+      text: 'Violation reference',
+      value: {
+        name: 'violations.reference',
+        type: 'String'
+        }
     }
-  },
-  components: {
-    // Submittal,
-    Violations,
-    draggable
-  },
-  emits: ["delete-submittal", "update-submittal","dynamic-query", "create-SDF", "create-PDF"]
-};
+  ];
+  const queryOperatorOptions = [        
+    {
+      text: '=',
+      value: '$eq'
+    },
+    {
+      text: '>',
+      value: '$gt'
+    },
+    {
+      text: '>=',
+      value: '$gte'
+    },
+    {
+      text: '<',
+      value: '$lt'
+    },
+    {
+      text: '<=',
+      value: '$lte'
+    },
+    {
+      text: '!=',
+      value: '$ne'
+    }
+  ];
+  const drag = false;
+
+  // Methods
+  const save = () => {
+    snack.value = true
+    snackColor.value = 'success'
+    snackText.value = 'Data saved'
+  }
+
+  const cancel = () => {
+    snack.value = true
+    snackColor.value = 'error'
+    snackText.value = 'Canceled'
+  }
+
+  const open = () => {
+    snack.value = true
+    snackColor.value = 'info'
+    snackText.value = 'Dialog opened'
+  }
+
+  const close = () => {
+    console.log('Dialog closed')
+  }
+
+  const selectAllNone = (prop, allNone) => {
+    if(allNone = 'all')
+    {
+      submittalFilter.value[prop] = prop
+    }
+    else
+    {
+      submittalFilter.value.prop = []
+    }
+  }
+
+  const saveSubmittal = (submittal) => {
+    // console.log('Submittals: ' + JSON.stringify(submittal));
+    submittals.updateSubmittal(submittal);
+  }
+
+  const addViolation = (violation, index) => {
+    submittals.submittals.find(submittal => submittal._id === filteredSubmittals.value[index]._id).violations.push(violation);
+  }
+
+  const addQueryField = () => {
+    if(queryFields.value.length == 0 || queryFields.value[queryFields.value.length - 1].value != ''){
+      queryFields.value.push({ key: '', value: '', andOr: 'and', operator: '$eq' })
+    }
+  }
+
+  const deleteQueryField = (index) => {
+    console.log('Index: ' + index)
+    console.log(queryFields.value)
+    queryFields.value.splice(index, 1)      
+    console.log(queryFields.value)
+  }
+
+  const getDynamicQuery = () => {
+    submittals.getDynamicQuery(queryFields.value);
+  }
+
+  const sortedItems = (items, sortKeys) => {
+    return _.sortBy(items, sortKeys)
+  }
+
+  const sortUpdate = (project) => {
+    // console.log('priority: ' + JSON.stringify(project.prioritySubmittals));
+    // console.log('unranked: ' + JSON.stringify(project.unrankedSubmittals));
+
+    projects.updateSubmittalPriorities(project);
+    // emit('update-submittal-priorities', project)
+  }
+
+  const createSDF = (submittal) => {
+    // console.log('Submittals: ' + JSON.stringify(submittal))
+    // emit('create-SDF', submittal)
+
+    ServerDataService.createSDF(submittal._id, submittal)
+        .then(response => {
+          console.log(response.data);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+  }
+
+  const createPDF = (submittal) => {
+    ServerDataService.createPDF(submittal._id, submittal)
+        .then(response => {
+          console.log(response.data);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    // emit('create-PDF', submittal)
+  }
+
+  const mergePDF = (submittal) => {
+    ServerDataService.mergePDF(submittal._id, submittal)
+        .then(response => {
+          console.log(response.data);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    // emit('merge-PDF', submittal)
+  }
+
+  const testDirectory = () => {
+      ServerDataService.testDir()
+        .then(response => {
+          console.log(response.data);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    }
+
+  // Computed
+
+  // I don't know what this was supposed to be:
+
+  // const numberOfPages = computed(() => {
+  //   return Math.ceil(this.items.length / this.itemsPerPage)
+  // });
+
+  const filteredSubmittals = computed(() => {
+    var filteredArray = submittals.submittals;
+    var myFilter = submittalFilter.value;
+
+    return filteredArray.filter(function(s){
+      var boolArray = []
+      for(const key in myFilter){
+        boolArray.push(myFilter[key].some(function(i){
+          return s[key] === i
+        }))
+      }
+      return boolArray.some(b => b)
+    });
+  });
 </script>
 
 <style scoped>

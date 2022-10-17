@@ -15,7 +15,7 @@
 					<v-form>
 						<div class="subtitle-1 py-0">Category</div>
 						<v-autocomplete
-							:items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
+							:items="violationCategories"
 							multiple
 							required
 							v-model="violation.category"
@@ -255,52 +255,111 @@
 	</div>
 </template>
 
-<script>
-	export default {
-		name: "Violations",
-		data: () => ({
-			selectedItem: [],
-			dialog: false,
-			referenceType: 'code',
-			newViolation: {
-				category: '',
-				limit: '',
-				actual: '',
-				reference: {
-					chapter: '',
-					paragraph: '',
-					drawing: '',
-					coordinates: '',
-					revision: '',
-					date: ''
-				}
-			},
-		}),
-		methods: {
-			addViolation () {
-				this.dialog = false
-				var nv = this.newViolation
-				switch(this.referenceType) {
-					case 'code':
-						console.log('Hey it be a code boye')
-						delete nv.reference.drawing;
-						delete nv.reference.coordinates;
-						break;
-					case 'drawing':                        
-						console.log('Hey it be a draw boye')
-						delete nv.reference.chapter;
-						delete nv.reference.paragraph;
-						break;
-				}
-				
-				this.$emit('add-violation', nv)
-			}
-		},
-		props: {
-			violations: Array,
-		},
-		emits: ['add-violation']
+<script setup>	
+	import { useSubmittalsStore } from '../stores/SubmittalsStore'
+	import { ref, computed } from 'vue'
+
+	const props = defineProps({
+		violations: Array
+	});
+	
+	const emit = defineEmits(['add-violation']);
+
+	// Data
+	const selectedItem = ref([]);
+	const dialog = ref(false);
+	const referenceType = ref('code');
+	const newViolation = ref({
+		category: '',
+		limit: '',
+		actual: '',
+		reference: {
+			chapter: '',
+			paragraph: '',
+			drawing: '',
+			coordinates: '',
+			revision: '',
+			date: ''
+		}
+	});
+	const violationCategories = ['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump'];
+
+	// Methods
+
+	const addViolation = () => {
+		dialog.value = false
+		var nv = newViolation.value
+		switch(referenceType.value) {
+			case 'code':
+				console.log('Hey it be a code boye')
+				delete nv.reference.drawing;
+				delete nv.reference.coordinates;
+				break;
+			case 'drawing':                        
+				console.log('Hey it be a draw boye')
+				delete nv.reference.chapter;
+				delete nv.reference.paragraph;
+				break;
+		}
+		
+		emit('add-violation', nv)
+
+    // submittals.submittals.find(submittal => submittal._id === filteredSubmittals.value[index]._id).violations.push(violation)
+
 	}
+
+	// const addQueryField = () => {
+	// 	if(queryFields.value.length == 0 || queryFields.value[queryFields.value.length - 1].value != ''){
+	// 	queryFields.value.push({ key: '', value: '', andOr: 'and', operator: '$eq' })
+	// 	}
+  	// }
+
+
+	// export default {
+	// 	name: "Violations",
+	// 	data: () => ({
+	// 		selectedItem: [],
+	// 		dialog: false,
+	// 		referenceType: 'code',
+	// 		newViolation: {
+	// 			category: '',
+	// 			limit: '',
+	// 			actual: '',
+	// 			reference: {
+	// 				chapter: '',
+	// 				paragraph: '',
+	// 				drawing: '',
+	// 				coordinates: '',
+	// 				revision: '',
+	// 				date: ''
+	// 			}
+	// 		},
+	// 	}),
+	// 	methods: {
+	// 		addViolation () {
+	// 			this.dialog = false
+	// 			var nv = this.newViolation
+	// 			switch(this.referenceType) {
+	// 				case 'code':
+	// 					console.log('Hey it be a code boye')
+	// 					delete nv.reference.drawing;
+	// 					delete nv.reference.coordinates;
+	// 					break;
+	// 				case 'drawing':                        
+	// 					console.log('Hey it be a draw boye')
+	// 					delete nv.reference.chapter;
+	// 					delete nv.reference.paragraph;
+	// 					break;
+	// 			}
+				
+	// 			this.$emit('add-violation', nv)
+	// 		}
+	// 	},
+	// 	props: {
+	// 		violations: Array,
+	// 	},
+	// 	emits: ['add-violation']
+	// }
 </script>
 
 <style scoped>

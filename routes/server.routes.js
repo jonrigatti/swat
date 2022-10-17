@@ -8,6 +8,7 @@ module.exports = app => {
     router.get("/testdir", server.testDir);
     router.put("/createSDF/:id", server.createSDF);
     router.put("/createPDF/:id", server.createPDF);
+    router.put("/mergePDF/:id", server.mergePDF);
 
     app.use('/api/server', router);
 }
