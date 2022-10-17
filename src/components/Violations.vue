@@ -6,7 +6,7 @@
 			class="condensed"
 		>
 			<v-expansion-panel
-				v-for="violation in violations" :key="violation.actual"
+				v-for="violation in violations" :key="violation._id"
 			>
 				<v-expansion-panel-header class="red darken-4">
 					Violation #{{ violations.indexOf(violation) + 1 }}

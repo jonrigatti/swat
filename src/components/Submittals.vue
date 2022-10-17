@@ -50,7 +50,7 @@
           <v-col cols="12">
             <v-data-iterator
               :items="filteredSubmittals"
-              item-key="submittalID"
+              item-key="_id"
               :items-per-page.sync="itemsPerPage"
               :page.sync="page"
               :search="search"
@@ -148,13 +148,14 @@
                 <v-row>
                   <v-col
                     v-for="(item, index) in items"
-                    :key="item.submittalID"
+                    :key="item._id"
                     cols="12"
                     sm="6"
                     md="4"
                     lg="3"
                   >
-                    <v-card shaped>
+                    <Submittal :submittal="item" />
+                    <!-- <v-card shaped>
                       <v-card-title class="cyan pa-1 ma-0">
                         <h2>{{ item.submittalID }}</h2>
                         <v-spacer></v-spacer>
@@ -194,9 +195,7 @@
                           <div>Contract: {{ item.contract }}</div>
                           <div>
                             Priority:
-                            <!-- v-show="project.prioritySubmittals.findIndex(submittal => { return submittal._id === item._id }) != -1" -->
-
-                            <span v-for="project in projects.projects" :key="project" v-show="project.prioritySubmittals.findIndex(s => { return s.submittal._id === item._id }) != -1">
+                            <span v-for="project in projects.projects" :key="project._id" v-show="project.prioritySubmittals.findIndex(s => { return s.submittal._id === item._id }) != -1">
                                 <v-menu
                                   offset-y
                                 >
@@ -211,7 +210,7 @@
                                   </template>
                                     <v-card>
                                       <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" handle=".handle" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
-                                        <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal" :class="s.submittal.submittalID === item.submittalID ? 'item draggable-item handle' : 'item'">
+                                        <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === item._id ? 'item draggable-item handle' : 'item nondraggable-item'">
                                           {{ index + 1 }}. {{s.submittal.submittalID}}
                                         </v-col>
                                       </draggable>
@@ -248,7 +247,7 @@
                             <v-icon>mdi-vector-combine</v-icon>
                           </v-btn>
                         </v-card-actions>
-                    </v-card>
+                    </v-card> -->
                   </v-col>
                 </v-row>
               </template>
@@ -263,8 +262,6 @@
       <v-container fluid>
       <v-row>
         <v-col cols="6" align-self="start">
-          <!-- <v-col v-for="submittal in sortedItems(project.prioritySubmittals, ['priority', 'submittalID'])" :key="submittal.submittalID">{{ submittal.priority }} - {{ submittal.submittalID }}</v-col> -->
-
           <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
             <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
               <v-card-subtitle slot="header">Priority Submittals</v-card-subtitle>
@@ -275,7 +272,6 @@
           </draggable>
         </v-col>
         <v-col cols="6" align-self="start">
-          <!-- <v-col v-for="submittal in sortedItems(project.prioritySubmittals, ['priority', 'submittalID'])" :key="submittal.submittalID">{{ submittal.priority }} - {{ submittal.submittalID }}</v-col> -->
           <draggable v-model="project.unrankedSubmittals" :group="project.name + 'Submittals'" draggable=".item" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
             <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
               <v-card-subtitle slot="header">Unranked Submittals</v-card-subtitle>
@@ -349,9 +345,9 @@
 <!-- https://terabytetiger.com/lessons/moving-from-vue-2-to-vue-3-composition-api -->
 <script setup>
   /* eslint-disable */
-  // import Submittal from './Submittal.vue';
-  import Violations from './Violations.vue';
-  import _ from 'lodash';
+  import Submittal from './Submittal.vue';
+  // import Violations from './Violations.vue';
+  // import _ from 'lodash';
   import draggable from 'vuedraggable';
   import { useSubmittalsStore } from '../stores/SubmittalsStore'
   import { useProjectsStore } from '../stores/ProjectsStore'
@@ -578,10 +574,6 @@
     submittals.getDynamicQuery(queryFields.value);
   }
 
-  const sortedItems = (items, sortKeys) => {
-    return _.sortBy(items, sortKeys)
-  }
-
   const sortUpdate = (project) => {
     // console.log('priority: ' + JSON.stringify(project.prioritySubmittals));
     // console.log('unranked: ' + JSON.stringify(project.unrankedSubmittals));
@@ -645,16 +637,15 @@
 
   const filteredSubmittals = computed(() => {
     var filteredArray = submittals.submittals;
-    var myFilter = submittalFilter.value;
 
     return filteredArray.filter(function(s){
-      var boolArray = []
-      for(const key in myFilter){
-        boolArray.push(myFilter[key].some(function(i){
-          return s[key] === i
-        }))
+      var boolArray = [];
+      for(const key in submittalFilter.value){
+        boolArray.push(submittalFilter.value[key].some(function(i){
+          return s[key] === i;
+        }));
       }
-      return boolArray.some(b => b)
+      return boolArray.some(b => b);
     });
   });
 </script>
@@ -675,6 +666,9 @@
     cursor: move !important;
     cursor: -webkit-grabbing !important;
   }
+  .nondraggable-item {
+    user-select: none;
+  }
   .ghost {
   opacity: 0.5;
   background: darkcyan;
@@ -682,7 +676,7 @@
   .flip-list-move {
   transition: transform 0.5s;
 }
-.no-move {
-  transition: transform 0s;
-}
+  .no-move {
+    transition: transform 0s;
+  }
 </style>
