@@ -3,41 +3,30 @@
     <template>
       <v-container fluid>
         <v-row>
-          <v-col cols="12">
-            <v-container>
-              <v-row>
-                <v-data-iterator
-                  :items="queryFields"
-                  item-key="key"
-                  :single-expand="singleExpand"
-                  hide-default-footer
-                >
-                  <template v-slot:default="{ items }">
-                    <v-row
-                      v-for="item in items"
-                      :key="item.key"
-                      no-gutters
-                    >
-                      <v-col>
-                        <v-select v-model="item.andOr" :items="['and', 'or']" class="fit pa-1 ma-1"></v-select>
-                      </v-col>
-                      <v-col>
-                        <v-select v-model="item.operator" item-text="text" item-value="value" :items="queryOperatorOptions" class="fit pa-1 ma-1"></v-select>    
-                      </v-col>
-                      <v-col cols="4">
-                        <v-select v-model="item.key" label="Search field" item-text="text" item-value="value" :items="queryKeyOptions" class="pa-1 ma-1"></v-select>
-                      </v-col>
-                      <v-col cols="4">
-                        <v-text-field v-model="item.value" label="Value" class="pa-1 ma-1"></v-text-field>
-                      </v-col>
-                      <v-col>
-                        <v-btn @click="deleteQueryField(items.indexOf(item))">
-                        <v-icon>mdi-minus</v-icon>
-                      </v-btn>
-                      </v-col>
-                    </v-row>
-                  </template>
-                </v-data-iterator>
+          <v-col cols="6">
+            <v-container fluid>
+              <v-row
+                v-for="qf in queryFields"
+                :key="qf.id"
+                no-gutters
+              >
+                <v-col>
+                  <v-select v-model="qf.andOr" :items="['and', 'or']" class="fit pa-1 ma-1"></v-select>
+                </v-col>
+                <v-col>
+                  <v-select v-model="qf.operator" item-text="text" item-value="value" :items="queryOperatorOptions" class="fit pa-1 ma-1"></v-select>    
+                </v-col>
+                <v-col cols="4">
+                  <v-select v-model="qf.key" label="Search field" item-text="text" item-value="value" :items="queryKeyOptions" class="pa-1 ma-1"></v-select>
+                </v-col>
+                <v-col cols="4">
+                  <v-text-field v-model="qf.value" label="Value" class="pa-1 ma-1"></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-btn @click="deleteQueryField(items.indexOf(item))">
+                  <v-icon>mdi-minus</v-icon>
+                </v-btn>
+                </v-col>
               </v-row>
               <v-row>
                 <v-btn @click="addQueryField">Add field</v-btn>
@@ -144,10 +133,10 @@
                 </v-toolbar>
               </template>
 
-              <template v-slot:default="{ items, isExpanded, expand }">
+              <template v-slot:default="{ items }">
                 <v-row>
                   <v-col
-                    v-for="(item, index) in items"
+                    v-for="(item) in items"
                     :key="item._id"
                     cols="12"
                     sm="6"
@@ -155,99 +144,6 @@
                     lg="3"
                   >
                     <Submittal :submittal="item" />
-                    <!-- <v-card shaped>
-                      <v-card-title class="cyan pa-1 ma-0">
-                        <h2>{{ item.submittalID }}</h2>
-                        <v-spacer></v-spacer>
-                        <v-btn icon @click="(v) => expand(item, !isExpanded(item))">
-                          <v-icon>{{ isExpanded(item) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-                        </v-btn>
-                      </v-card-title>
-                        <v-form>
-                          <v-list
-                            dense
-                          >
-                            <v-list-item>
-                              <v-list-item-content>Need Date:</v-list-item-content>
-                              <v-list-item-content class="align-end">
-                                <v-text-field
-                                  v-model="item.needDate">
-                                </v-text-field>
-                              </v-list-item-content>
-                            </v-list-item>
-                            <v-list-item>
-                              <v-list-item-content>Disposition Date:</v-list-item-content>
-                              <v-list-item-content class="align-end">
-                                <v-text-field
-                                  v-model="item.dispositionDate">
-                                </v-text-field>
-                              </v-list-item-content>
-                            </v-list-item>
-                            <v-list-item>
-                              <v-list-item-content>Owner:</v-list-item-content>
-                              <v-list-item-content class="align-end">
-                                <v-text-field
-                                  v-model="item.owner">
-                                </v-text-field>
-                              </v-list-item-content>
-                            </v-list-item> 
-                          </v-list>
-                          <div>Contract: {{ item.contract }}</div>
-                          <div>
-                            Priority:
-                            <span v-for="project in projects.projects" :key="project._id" v-show="project.prioritySubmittals.findIndex(s => { return s.submittal._id === item._id }) != -1">
-                                <v-menu
-                                  offset-y
-                                >
-                                  <template v-slot:activator="{ on, attrs }">
-                                    <v-btn
-                                      class="ma-2"
-                                      v-bind="attrs"
-                                      v-on="on"
-                                    >
-                                      {{ project.name }} - {{ project.prioritySubmittals.findIndex(s => { return s.submittal._id === item._id }) + 1}}
-                                    </v-btn>
-                                  </template>
-                                    <v-card>
-                                      <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" handle=".handle" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
-                                        <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === item._id ? 'item draggable-item handle' : 'item nondraggable-item'">
-                                          {{ index + 1 }}. {{s.submittal.submittalID}}
-                                        </v-col>
-                                      </draggable>
-                                    </v-card>
-                                </v-menu>
-                            </span>
-                          </div>
-                        </v-form>
-                        <v-divider v-if="isExpanded(item)"></v-divider>                    
-                        <Violations :violations="item.violations" v-if="isExpanded(item)" @add-violation="addViolation($event, index)" />
-                        <v-card-actions>
-                          <v-btn
-                            icon
-                            @click="saveSubmittal(item)"
-                          >
-                            <v-icon>mdi-content-save-edit</v-icon>
-                          </v-btn>
-                          <v-btn
-                            icon
-                            @click="createSDF(item)"
-                          >
-                            <v-icon>mdi-archive-plus</v-icon>
-                          </v-btn>
-                          <v-btn
-                            icon
-                            @click="createPDF(item)"
-                          >
-                            <v-icon>mdi-file-pdf-box</v-icon>
-                          </v-btn>
-                          <v-btn
-                            icon
-                            @click="mergePDF(item)"
-                          >
-                            <v-icon>mdi-vector-combine</v-icon>
-                          </v-btn>
-                        </v-card-actions>
-                    </v-card> -->
                   </v-col>
                 </v-row>
               </template>
@@ -256,34 +152,6 @@
           </v-row>
       </v-container>
     </template>
-
-    <v-card v-for="project in projects.projects" :key="project.name" class="pa-2 ma-2" width="500">
-      <v-card-title>{{project.name}}</v-card-title>
-      <v-container fluid>
-      <v-row>
-        <v-col cols="6" align-self="start">
-          <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
-            <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
-              <v-card-subtitle slot="header">Priority Submittals</v-card-subtitle>
-              <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittalID" class="item draggable-item">
-                {{ index + 1 }}. {{s.submittal.submittalID }} - {{ s.submittal.description }} - {{ s.driver }}
-              </v-col>
-            <!-- </transition-group> -->
-          </draggable>
-        </v-col>
-        <v-col cols="6" align-self="start">
-          <draggable v-model="project.unrankedSubmittals" :group="project.name + 'Submittals'" draggable=".item" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
-            <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
-              <v-card-subtitle slot="header">Unranked Submittals</v-card-subtitle>
-              <v-col v-for="s in project.unrankedSubmittals" :key="s.submittal.submittalID" class="item draggable-item">
-                {{ s.submittal.submittalID }} - {{ s.submittal.description }}
-              </v-col>
-            <!-- </transition-group> -->
-          </draggable>
-        </v-col>
-      </v-row>
-      </v-container>
-    </v-card>
 
     <v-container fluid class="my-1">
       <v-data-table
@@ -344,14 +212,10 @@
 
 <!-- https://terabytetiger.com/lessons/moving-from-vue-2-to-vue-3-composition-api -->
 <script setup>
-  /* eslint-disable */
   import Submittal from './Submittal.vue';
-  // import Violations from './Violations.vue';
-  // import _ from 'lodash';
   import draggable from 'vuedraggable';
   import { useSubmittalsStore } from '../stores/SubmittalsStore'
   import { useProjectsStore } from '../stores/ProjectsStore'
-  import ServerDataService from '../services/ServerDataService'
   import { ref, computed } from 'vue'
 
   const submittals = useSubmittalsStore();
@@ -360,7 +224,7 @@
   const projects = useProjectsStore();
   projects.getProjects();
 
-  console.log(JSON.stringify(projects.projects));
+  // console.log(JSON.stringify(projects.projects));
 
   // Data
   const itemsPerPageArray = [4, 8, 12];
@@ -548,19 +412,11 @@
     }
   }
 
-  const saveSubmittal = (submittal) => {
-    // console.log('Submittals: ' + JSON.stringify(submittal));
-    submittals.updateSubmittal(submittal);
-  }
-
-  const addViolation = (violation, index) => {
-    submittals.submittals.find(submittal => submittal._id === filteredSubmittals.value[index]._id).violations.push(violation);
-  }
-
   const addQueryField = () => {
     if(queryFields.value.length == 0 || queryFields.value[queryFields.value.length - 1].value != ''){
-      queryFields.value.push({ key: '', value: '', andOr: 'and', operator: '$eq' })
+      queryFields.value.push({ id: Math.random() * 10000, key: '', value: '', andOr: 'and', operator: '$eq' })
     }
+    console.log(JSON.stringify(queryFields));
   }
 
   const deleteQueryField = (index) => {
@@ -581,51 +437,6 @@
     projects.updateSubmittalPriorities(project);
     // emit('update-submittal-priorities', project)
   }
-
-  const createSDF = (submittal) => {
-    // console.log('Submittals: ' + JSON.stringify(submittal))
-    // emit('create-SDF', submittal)
-
-    ServerDataService.createSDF(submittal._id, submittal)
-        .then(response => {
-          console.log(response.data);
-        })
-        .catch(e => {
-          console.log(e);
-        });
-  }
-
-  const createPDF = (submittal) => {
-    ServerDataService.createPDF(submittal._id, submittal)
-        .then(response => {
-          console.log(response.data);
-        })
-        .catch(e => {
-          console.log(e);
-        });
-    // emit('create-PDF', submittal)
-  }
-
-  const mergePDF = (submittal) => {
-    ServerDataService.mergePDF(submittal._id, submittal)
-        .then(response => {
-          console.log(response.data);
-        })
-        .catch(e => {
-          console.log(e);
-        });
-    // emit('merge-PDF', submittal)
-  }
-
-  const testDirectory = () => {
-      ServerDataService.testDir()
-        .then(response => {
-          console.log(response.data);
-        })
-        .catch(e => {
-          console.log(e);
-        });
-    }
 
   // Computed
 
@@ -665,6 +476,7 @@
   .draggable-item {
     cursor: move !important;
     cursor: -webkit-grabbing !important;
+    user-select: none;
   }
   .nondraggable-item {
     user-select: none;

@@ -2,10 +2,10 @@
     <div>
         <v-card shaped>
             <v-card-title class="cyan pa-1 ma-0">
-            <h2>{{ submittal.submittalID }}</h2>
+                <h2>{{ submittal.submittalID }}</h2>
             <v-spacer></v-spacer>
-            <v-btn icon @click="(v) => expanded = !expanded">
-                <v-icon>{{ expanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+            <v-btn icon @click="(v) => expanded = !expanded" >
+                <v-icon class="toggleUpDown" :class='{ "rotate": !expanded }'>mdi-chevron-up</v-icon>
             </v-btn>
             </v-card-title>
             <v-form>
@@ -109,12 +109,12 @@
     });
 
     const submittals = useSubmittalsStore();
-    submittals.getSubmittals();
+    // submittals.getSubmittals();
 
     const projects = useProjectsStore();
-    projects.getProjects();
+    // projects.getProjects();
 
-    console.log(JSON.stringify(projects.projects));
+    // console.log(JSON.stringify(projects.projects));
 
     // Data
     const expanded = ref(false);
@@ -123,42 +123,42 @@
 
     // Methods
     const save = () => {
-    snack.value = true
-    snackColor.value = 'success'
-    snackText.value = 'Data saved'
+        snack.value = true
+        snackColor.value = 'success'
+        snackText.value = 'Data saved'
     }
 
     const cancel = () => {
-    snack.value = true
-    snackColor.value = 'error'
-    snackText.value = 'Canceled'
+        snack.value = true
+        snackColor.value = 'error'
+        snackText.value = 'Canceled'
     }
 
     const open = () => {
-    snack.value = true
-    snackColor.value = 'info'
-    snackText.value = 'Dialog opened'
+        snack.value = true
+        snackColor.value = 'info'
+        snackText.value = 'Dialog opened'
     }
 
     const close = () => {
-    console.log('Dialog closed')
+        console.log('Dialog closed')
     }
 
     const saveSubmittal = (submittal) => {
-    // console.log('Submittals: ' + JSON.stringify(submittal));
-    submittals.updateSubmittal(submittal);
+        // console.log('Submittals: ' + JSON.stringify(submittal));
+        submittals.updateSubmittal(submittal);
     }
 
     const addViolation = (violation, index) => {
-    submittals.submittals.find(submittal => submittal._id === filteredSubmittals.value[index]._id).violations.push(violation);
+        submittals.submittals.find(submittal => submittal._id === filteredSubmittals.value[index]._id).violations.push(violation);
     }
 
     const sortUpdate = (project) => {
-    // console.log('priority: ' + JSON.stringify(project.prioritySubmittals));
-    // console.log('unranked: ' + JSON.stringify(project.unrankedSubmittals));
+        // console.log('priority: ' + JSON.stringify(project.prioritySubmittals));
+        // console.log('unranked: ' + JSON.stringify(project.unrankedSubmittals));
 
-    projects.updateSubmittalPriorities(project);
-    // emit('update-submittal-priorities', project)
+        projects.updateSubmittalPriorities(project);
+        // emit('update-submittal-priorities', project)
     }
 
     const createSDF = (submittal) => {
@@ -235,5 +235,11 @@
 }
 .no-move {
     transition: transform 0s;
+}
+.toggleUpDown {
+    transition: transform .3s ease-in-out !important;  
+}
+.toggleUpDown.rotate {
+    transform: rotate(180deg);
 }
 </style>

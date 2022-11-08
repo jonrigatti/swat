@@ -1,18 +1,9 @@
 <template>  
   <div>
-    <p>ddddddddddddddddddd</p>
-    <Submittals :submittals="submittals" @delete-submittal="deleteSubmittal" @toggle-priority="togglePriority" @update-submittal="updateSubmittal" @dynamic-query="getDynamicQuery" />
+    <p>Home for some reason</p>
   </div>
 </template>
 
-<script>
-import Submittals from '@/components/Submittals.vue'
+<script setup>
 
-export default {
-  name: "Home",
-
-  components: {
-    Submittals
-  },
-};
 </script>
