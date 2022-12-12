@@ -33,9 +33,9 @@
                         <v-card v-for="(s, index) in project.prioritySubmittals" :key="s.submittalID" class="item draggable-item mb-2">
                             <v-card-title class="handle">{{ index + 1 }}. {{s.submittal.submittalID }}</v-card-title>
                             <v-card-subtitle class="py-0">{{ s.submittal.description }}</v-card-subtitle>               
-                            <v-card-contents>
+                            <v-card-text>
                                 <v-text-field single-line v-model="s.driver" cols="8" label="Priority driver" class="mx-6" @change="sortUpdate(project)"></v-text-field>
-                            </v-card-contents>
+                            </v-card-text>
                         </v-card>
                         <!-- </transition-group> -->
                     </draggable>

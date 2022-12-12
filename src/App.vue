@@ -26,4 +26,16 @@
   body {
     font-family: 'Poppins', sans-serif;
   }
+  
+  .v-card__title {
+      background: linear-gradient(74deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.25))
+  }
+  
+  .v-toolbar {
+      background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.25))
+  }
+  
+  .v-expansion-panel-header {
+      background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.25))
+  }
 </style>

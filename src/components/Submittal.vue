@@ -1,72 +1,43 @@
 <template>
     <div>
         <v-card shaped>
-            <v-card-title class="cyan pa-1 ma-0">
+            <v-card-title class="cyan pa-2">
                 <h2>{{ submittal.submittalID }}</h2>
-            <v-spacer></v-spacer>
-            <v-btn icon @click="(v) => expanded = !expanded" >
-                <v-icon class="toggleUpDown" :class='{ "rotate": !expanded }'>mdi-chevron-up</v-icon>
-            </v-btn>
+                <v-spacer></v-spacer>
+                <v-btn icon @click="(v) => expanded = !expanded" >
+                    <v-icon class="toggleUpDown" :class='{ "rotate": !expanded }'>mdi-chevron-up</v-icon>
+                </v-btn>
             </v-card-title>
-            <v-form>
-                <v-list
-                dense
-                >
-                <v-list-item>
-                    <v-list-item-content>Need Date:</v-list-item-content>
-                    <v-list-item-content class="align-end">
-                    <v-text-field
-                        v-model="submittal.needDate">
-                    </v-text-field>
-                    </v-list-item-content>
-                </v-list-item>
-                <v-list-item>
-                    <v-list-item-content>Disposition Date:</v-list-item-content>
-                    <v-list-item-content class="align-end">
-                    <v-text-field
-                        v-model="submittal.dispositionDate">
-                    </v-text-field>
-                    </v-list-item-content>
-                </v-list-item>
-                <v-list-item>
-                    <v-list-item-content>Owner:</v-list-item-content>
-                    <v-list-item-content class="align-end">
-                    <v-text-field
-                        v-model="submittal.owner">
-                    </v-text-field>
-                    </v-list-item-content>
-                </v-list-item> 
-                </v-list>
-                <div>Contract: {{ submittal.contract }}</div>
-                <div>
-                Priority:
-                <span v-for="project in projects.projects" :key="project._id" v-show="project.prioritySubmittals.findIndex(s => { return s.submittal._id === submittal._id }) != -1">
-                    <v-menu
-                        offset-y
-                    >
-                        <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                            class="ma-2"
-                            v-bind="attrs"
-                            v-on="on"
-                        >
-                            {{ project.name }} - {{ project.prioritySubmittals.findIndex(s => { return s.submittal._id === submittal._id }) + 1}}
-                        </v-btn>
-                        </template>
-                        <v-card>
-                            <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" handle=".handle" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
-                            <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === submittal._id ? 'item draggable-item handle' : 'item nondraggable-item'">
-                                {{ index + 1 }}. {{s.submittal.submittalID}}
-                            </v-col>
-                            </draggable>
-                        </v-card>
-                    </v-menu>
-                </span>
-                </div>
-            </v-form>
-            <v-divider v-if="expanded"></v-divider>                    
-            <Violations :violations="submittal.violations" v-if="expanded" @add-violation="addViolation($event, index)" />
-            <v-card-actions>
+            <v-card-subtitle>
+                <v-text-field v-model="submittal.description"></v-text-field>
+            </v-card-subtitle>
+            Need Date:
+            <v-text-field
+                v-model="submittal.needDate">
+            </v-text-field>
+            Disposition Date:
+            <v-text-field
+                v-model="submittal.dispositionDate">
+            </v-text-field>
+            Owner:
+            <v-text-field
+                v-model="submittal.owner">
+            </v-text-field>
+            <div>Contract: {{ submittal.contract }}</div>
+            <v-card>
+                <v-card-title class="pa-2">Stakeholders</v-card-title>
+                <v-card-text v-show="expanded">
+                    <Stakeholders :stakeholders="submittal.stakeholders" />
+                </v-card-text>
+            </v-card>
+            <v-card>
+                <v-card-title class="pa-2">Violations</v-card-title>
+                <v-card-text>
+                    <Violations :violations="submittal.violations" v-show="expanded" @add-violation="addViolation($event, index)" />
+                </v-card-text>
+            </v-card>
+            <v-card-actions class="grey darken-4">
+                <v-spacer></v-spacer>
                 <v-btn
                     icon
                     @click="saveSubmittal(submittal)"
@@ -97,6 +68,8 @@
 </template>
 
 <script setup>
+    import Stakeholder from './Stakeholder.vue';
+    import Stakeholders from './Stakeholders.vue';
     import Violations from './Violations.vue';
     import draggable from 'vuedraggable';
     import { useSubmittalsStore } from '../stores/SubmittalsStore'
@@ -118,8 +91,9 @@
 
     // Data
     const expanded = ref(false);
-
-    const drag = false;
+    const drag = ref(false);
+    const requestedDateMenu = ref(false);
+    const completedDateMenu = ref(false);
 
     // Methods
     const save = () => {

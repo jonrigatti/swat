@@ -12,7 +12,7 @@
     <template v-slot:img="{ props }">
       <v-img
         v-bind="props"
-        gradient="to top right, rgba(197, 17, 98,.7), rgba(252, 228, 236,.7)"
+        gradient="to top right, rgba(57, 17, 68,.7), rgba(172, 88, 166,.7)"
       ></v-img>
     </template>
 
@@ -35,7 +35,7 @@
     </v-btn>
 
     <template v-slot:extension>
-      <v-tabs align-with-title color="pink">            
+      <v-tabs align-with-title color="pink lighten-2">            
         <v-tab to="/">Home</v-tab>
         <v-tab to="/submittals">Submittals</v-tab>
         <v-tab to="/projects">Projects</v-tab>
