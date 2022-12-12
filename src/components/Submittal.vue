@@ -24,6 +24,31 @@
                 v-model="submittal.owner">
             </v-text-field>
             <div>Contract: {{ submittal.contract }}</div>
+            <div>
+                Priority:
+                <span v-for="project in projects.projects" :key="project._id" v-show="project.prioritySubmittals.findIndex(s => { return s.submittal._id === submittal._id }) != -1">
+                    <v-menu
+                        offset-y
+                    >
+                        <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                            class="ma-2"
+                            v-bind="attrs"
+                            v-on="on"
+                        >
+                            {{ project.name }} - {{ project.prioritySubmittals.findIndex(s => { return s.submittal._id === submittal._id }) + 1}}
+                        </v-btn>
+                        </template>
+                        <v-card>
+                            <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" handle=".handle" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
+                            <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === submittal._id ? 'item draggable-item handle' : 'item nondraggable-item'">
+                                {{ index + 1 }}. {{s.submittal.submittalID}}
+                            </v-col>
+                            </draggable>
+                        </v-card>
+                    </v-menu>
+                </span>
+                </div>
             <v-card>
                 <v-card-title class="pa-2">Stakeholders</v-card-title>
                 <v-card-text v-show="expanded">
