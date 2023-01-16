@@ -10,7 +10,7 @@
         <v-row>
           <v-col cols="12">
             <v-data-iterator
-              :items="filteredSubmittals"
+              :items="submittals.submittals"
               item-key="_id"
               :items-per-page.sync="itemsPerPage"
               :page.sync="page"
@@ -99,9 +99,31 @@
                       {{ owner }}
                     </v-btn>
                   </v-btn-toggle>
+                  <v-btn-toggle
+                    dense
+                    background-color="primary"
+                    multiple
+                  >                    
+                  <v-btn
+                      dense
+                      color="grey darken-3"
+                      @click="submittalFilter2.peerReviewNeeded = !submittalFilter2.peerReviewNeeded"
+                    >
+                      Peer Review Needed
+                    </v-btn>
+                    <v-btn
+                      dense
+                      color="grey darken-3"
+                      @click="submittalFilter2.nrInformed = !submittalFilter2.nrInformed"
+                    >
+                      NR Informed
+                    </v-btn>
+                  </v-btn-toggle>
                   {{ submittalFilter.coreType }}
                   {{ submittalFilter.owner }}
+                  {{ submittalFilter.peerReviewNeeded }}
                   {{ sortDesc }}
+                  <!-- {{ filteredSubmittals }} -->
                 </v-toolbar>
               </template>
 
@@ -114,6 +136,7 @@
                     sm="6"
                     md="4"
                     lg="3"
+                    v-show="filteredSubmittals.includes(item)"
                   >
                     <Submittal :submittal="item" />
                   </v-col>
@@ -128,7 +151,7 @@
     <v-container fluid class="my-1">
       <v-data-table
         :headers="headers"
-        :items="filteredSubmittals"
+        :items="submittals.submittals"
         :sort-by="['submittalID', 'owner']"
         :sort-desc="[false, true]"
         multi-sort
@@ -177,6 +200,7 @@
   import { useSubmittalsStore } from '../stores/SubmittalsStore'
   import { useProjectsStore } from '../stores/ProjectsStore'
   import { ref, computed } from 'vue'
+  import filter from 'lodash/filter';
 
   const submittals = useSubmittalsStore();
   submittals.getSubmittals();
@@ -192,6 +216,10 @@
   const submittalFilter = ref({
     coreType: ['A', 'B', 'C', 'D'],
     owner: []
+  });  
+  const submittalFilter2 = ref({
+    peerReviewNeeded: false,
+    nrInformed: false
   });
   const sortDesc = ref(false);
   const page = ref(1);
@@ -257,26 +285,29 @@
   }
 
   // Computed
-
-  // I don't know what this was supposed to be:
-
-  // const numberOfPages = computed(() => {
-  //   return Math.ceil(this.items.length / this.itemsPerPage)
-  // });
-
   const filteredSubmittals = computed(() => {
-    var filteredArray = submittals.submittals;
 
-    return filteredArray.filter(function(s){
-      var boolArray = [];
+    return submittals.submittals.filter((s) => {
+      var someArray = [];
       for(const key in submittalFilter.value){
-        boolArray.push(submittalFilter.value[key].some(function(i){
+        someArray.push(submittalFilter.value[key].some((i) => {
           return s[key] === i;
         }));
       }
-      return boolArray.some(b => b);
+
+      var everyArray = [];
+      for(const key in submittalFilter2.value){
+        if(submittalFilter2.value[key]) {
+          everyArray.push(s[key] === submittalFilter2.value[key])
+        }
+        console.log(submittalFilter2.value[key]);
+      }
+
+      return [someArray.some(sA => sA)].concat(everyArray).every(e => e);
     });
-  });
+
+
+  });  
 </script>
 
 <style scoped>

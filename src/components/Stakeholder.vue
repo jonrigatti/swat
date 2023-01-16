@@ -30,11 +30,13 @@
                             :value="formattedDate(requestedDate)"
                             class="my-2"
                             dense
+                            clearable
                             label="Requested date"
                             prepend-icon="mdi-calendar-start"
                             readonly
                             v-bind="attrs"
                             v-on="on"
+                            @click:clear="stakeholder.requestedDate = null"
                         ></v-text-field>
                     </template>
                     <v-date-picker
@@ -55,11 +57,13 @@
                             :value="formattedDate(completedDate)"
                             class="my-2"
                             dense
+                            clearable
                             label="Completed date"
                             prepend-icon="mdi-calendar-check"
                             readonly
                             v-bind="attrs"
-                            v-on="on"
+                            v-on="on"                            
+                            @click:clear="stakeholder.completedDate = null"
                         ></v-text-field>
                     </template>
                     <v-date-picker

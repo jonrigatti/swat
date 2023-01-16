@@ -41,11 +41,16 @@
     const blankStakeholder = {
         name: "",
         organization: "",
-        requestedDate: new Date(),
-        completedDate: new Date()
+        requestedDate: "",
+        completedDate: ""
     };
 
-    const newStakeholder = ref(blankStakeholder);
+    const newStakeholder = ref({
+        name: "",
+        organization: "",
+        requestedDate: "",
+        completedDate: ""
+    });
     
     const addingStakeholder = ref(false);
 
@@ -55,13 +60,15 @@
 
     const addNewStakeholder = () => {
         props.stakeholders.push(newStakeholder.value);
-        addingStakeholder.value = false;
-        newStakeholder.value = blankStakeholder.value;
+        addingStakeholder.value = false;        
+        console.log(blankStakeholder);
+        newStakeholder.value = blankStakeholder;
+        console.log(newStakeholder.value);
     }
 
     const cancelNewStakeholder = () => {
         addingStakeholder.value = false;
-        newStakeholder.value = blankStakeholder.value;
+        newStakeholder.value = blankStakeholder;
     }
 
     const deleteStakeholder = (index) => {

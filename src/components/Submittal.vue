@@ -24,6 +24,9 @@
                 v-model="submittal.owner">
             </v-text-field>
             <div>Contract: {{ submittal.contract }}</div>
+            
+            <div>Peer Review Needed: {{ submittal.peerReviewNeeded }}</div>
+            <div>NR Informed: {{ submittal.nrInformed }}</div>
             <div>
                 Priority:
                 <span v-for="project in projects.projects" :key="project._id" v-show="project.prioritySubmittals.findIndex(s => { return s.submittal._id === submittal._id }) != -1">
