@@ -14,7 +14,7 @@
                 >
                     <v-icon x-large>mdi-plus</v-icon>
             </v-btn>
-            <v-card v-show="addingStakeholder" class="pa-0 ma-0">
+            <v-card v-if="addingStakeholder" class="pa-0 ma-0">
                     <Stakeholder :stakeholder="newStakeholder"/>
                 <v-card-actions>
                     <v-btn
@@ -38,12 +38,13 @@
     import Stakeholder from './Stakeholder.vue';
     import { ref, computed } from 'vue'
     
-    const blankStakeholder = {
-        name: "",
-        organization: "",
-        requestedDate: "",
-        completedDate: ""
-    };
+    // For some reason setting newStakeholder to blankStakeholder pushes all the changes from newStakeholder to blankStakeholder
+    // const blankStakeholder = {
+    //     name: "",
+    //     organization: "",
+    //     requestedDate: "",
+    //     completedDate: ""
+    // };
 
     const newStakeholder = ref({
         name: "",
@@ -61,14 +62,23 @@
     const addNewStakeholder = () => {
         props.stakeholders.push(newStakeholder.value);
         addingStakeholder.value = false;        
-        console.log(blankStakeholder);
-        newStakeholder.value = blankStakeholder;
-        console.log(newStakeholder.value);
+        // console.log(blankStakeholder);
+        newStakeholder.value = {
+            name: "",
+            organization: "",
+            requestedDate: "",
+            completedDate: ""
+        };
     }
 
     const cancelNewStakeholder = () => {
         addingStakeholder.value = false;
-        newStakeholder.value = blankStakeholder;
+        newStakeholder.value = {
+            name: "",
+            organization: "",
+            requestedDate: "",
+            completedDate: ""
+        };
     }
 
     const deleteStakeholder = (index) => {
