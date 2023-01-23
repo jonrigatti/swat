@@ -8,60 +8,50 @@
                     <v-icon class="toggleUpDown" :class='{ "rotate": !expanded }'>mdi-chevron-up</v-icon>
                 </v-btn>
             </v-card-title>
-            <v-card-subtitle>
-                <v-text-field v-model="submittal.description"></v-text-field>
-            </v-card-subtitle>
-            Need Date:
-            <v-text-field
-                v-model="submittal.needDate">
-            </v-text-field>
-            Disposition Date:
-            <v-text-field
-                v-model="submittal.dispositionDate">
-            </v-text-field>
-            Owner:
-            <v-text-field
-                v-model="submittal.owner">
-            </v-text-field>
-            <div>Contract: {{ submittal.contract }}</div>
-            
-            <div>Peer Review Needed: {{ submittal.peerReviewNeeded }}</div>
-            <div>NR Informed: {{ submittal.nrInformed }}</div>
-            <div>
-                Priority:
-                <span v-for="project in projects.projects" :key="project._id" v-show="project.prioritySubmittals.findIndex(s => { return s.submittal._id === submittal._id }) != -1">
-                    <v-menu
-                        offset-y
-                    >
-                        <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                            class="ma-2"
-                            v-bind="attrs"
-                            v-on="on"
+            <v-card-text>
+                <v-text-field v-model="submittal.description" label="Description"></v-text-field>                
+                <v-text-field v-model="submittal.owner" label="Owner"></v-text-field>
+                <Datepicker :dateProp="submittal.needDate" labelProp="Need Date" iconProp="mdi-calendar-blank" @update-date="(date) => submittal.needDate = date" />        
+                <Datepicker :dateProp="submittal.dispositionDate" labelProp="Disposition Date" iconProp="mdi-calendar-blank" @update-date="(date) => submittal.dispositionDate = date" />
+                <div>Contract: {{ submittal.contract }}</div>            
+                <div>Peer Review Needed: {{ submittal.peerReviewNeeded }}</div>
+                <div>NR Informed: {{ submittal.nrInformed }}</div>
+                <div>
+                    Priority:
+                    <span v-for="project in projects.projects" :key="project._id" v-show="project.prioritySubmittals.findIndex(s => { return s.submittal._id === submittal._id }) != -1">
+                        <v-menu
+                            offset-y
                         >
-                            {{ project.name }} - {{ project.prioritySubmittals.findIndex(s => { return s.submittal._id === submittal._id }) + 1}}
-                        </v-btn>
-                        </template>
-                        <v-card>
-                            <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" handle=".handle" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
-                            <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === submittal._id ? 'item draggable-item handle' : 'item nondraggable-item'">
-                                {{ index + 1 }}. {{s.submittal.submittalID}}
-                            </v-col>
-                            </draggable>
-                        </v-card>
-                    </v-menu>
-                </span>
+                            <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                                class="ma-2"
+                                v-bind="attrs"
+                                v-on="on"
+                            >
+                                {{ project.name }} - {{ project.prioritySubmittals.findIndex(s => { return s.submittal._id === submittal._id }) + 1}}
+                            </v-btn>
+                            </template>
+                            <v-card>
+                                <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" handle=".handle" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
+                                <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === submittal._id ? 'item draggable-item handle' : 'item nondraggable-item'">
+                                    {{ index + 1 }}. {{s.submittal.submittalID}}
+                                </v-col>
+                                </draggable>
+                            </v-card>
+                        </v-menu>
+                    </span>
                 </div>
+            </v-card-text>
             <v-card>
                 <v-card-title class="pa-2">Stakeholders</v-card-title>
-                <v-card-text v-show="expanded">
+                <v-card-text v-show="!expanded">
                     <Stakeholders :stakeholders="submittal.stakeholders" />
                 </v-card-text>
             </v-card>
             <v-card>
                 <v-card-title class="pa-2">Violations</v-card-title>
                 <v-card-text>
-                    <Violations :violations="submittal.violations" v-show="expanded" @add-violation="addViolation($event, index)" />
+                    <Violations :violations="submittal.violations" v-show="!expanded" @add-violation="addViolation($event, index)" />
                 </v-card-text>
             </v-card>
             <v-card-actions class="grey darken-4">
@@ -99,6 +89,7 @@
     import Stakeholder from './Stakeholder.vue';
     import Stakeholders from './Stakeholders.vue';
     import Violations from './Violations.vue';
+    import Datepicker from './Datepicker.vue'
     import draggable from 'vuedraggable';
     import { useSubmittalsStore } from '../stores/SubmittalsStore'
     import { useProjectsStore } from '../stores/ProjectsStore'
@@ -120,8 +111,6 @@
     // Data
     const expanded = ref(false);
     const drag = ref(false);
-    const requestedDateMenu = ref(false);
-    const completedDateMenu = ref(false);
 
     // Methods
     const save = () => {

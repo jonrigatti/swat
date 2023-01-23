@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-card class="pa-0 ma-2" width="200">
+        <v-card class="pa-0 ma-2" width="205">
             <v-card-title class="cyan pa-2 ma-0">
                 <v-text-field v-model="stakeholder.organization" placeholder="Organization" class="pa-0 ma-0" style="font-size: 1.5em;" dense></v-text-field>
             </v-card-title>
@@ -17,60 +17,8 @@
                     label="Review type"
                     dense
                 ></v-select>
-                <v-menu
-                    v-model="dateMenus.requestedDate"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                >
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                            :value="formattedDate(requestedDate)"
-                            class="my-2"
-                            dense
-                            clearable
-                            label="Requested date"
-                            prepend-icon="mdi-calendar-start"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                            @click:clear="stakeholder.requestedDate = null"
-                        ></v-text-field>
-                    </template>
-                    <v-date-picker
-                        v-model="requestedDate"
-                        @input="selectDate($event, 'requestedDate')"
-                    ></v-date-picker>
-                </v-menu>
-                <v-menu
-                    v-model="dateMenus.completedDate"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                >
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                            :value="formattedDate(completedDate)"
-                            class="my-2"
-                            dense
-                            clearable
-                            label="Completed date"
-                            prepend-icon="mdi-calendar-check"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"                            
-                            @click:clear="stakeholder.completedDate = null"
-                        ></v-text-field>
-                    </template>
-                    <v-date-picker
-                        v-model="completedDate"
-                        @input="selectDate($event, 'completedDate')"
-                    ></v-date-picker>
-                </v-menu>
+                <Datepicker :date-prop="stakeholder.requestedDate" labelProp="Requested Date" iconProp="mdi-calendar-start" @update-date="(date) => stakeholder.requestedDate = date" />
+                <Datepicker :date-prop="stakeholder.completedDate" labelProp="Completed Date" iconProp="mdi-calendar-check" @update-date="(date) => stakeholder.completedDate = date" />
             </v-card-text>
             <v-card-actions class="grey darken-4 py-0">
                 <v-spacer></v-spacer>
@@ -119,7 +67,8 @@
 
 <script setup>
     import { ref, computed } from 'vue';
-    import dayjs from 'dayjs';
+    import dayjs from 'dayjs';    
+    import Datepicker from './Datepicker.vue';
 
     const props = defineProps({
         stakeholder: {}
