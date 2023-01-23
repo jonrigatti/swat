@@ -165,7 +165,7 @@
 						</v-col>
 						<v-col cols="12">
 							<v-autocomplete
-								:items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
+								:items="['Skiing', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Foosball']"
 								label="Category"
 								multiple
 								required
