@@ -67,6 +67,13 @@ SubmittalSchema.virtual('nrInformed').get(function() {
     this.set({ v });
 });
 
+SubmittalSchema.virtual('open').get(function() {
+    const open = this.dispositionDate === null ? true : false;
+    return open;
+}).set(function(v) {
+    this.set({ v });
+});
+
 module.exports = mongoose => {
     const Submittal = mongoose.model(
         "submittal",

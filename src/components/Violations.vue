@@ -159,8 +159,8 @@
 								group
 								mandatory
 							>
-								<v-btn value="code">Code</v-btn>                                
-								<v-btn value="drawing">Drawing</v-btn>                                
+								<v-btn value="code">Code</v-btn>
+								<v-btn value="drawing">Drawing</v-btn>
 							</v-btn-toggle>
 						</v-col>
 						<v-col cols="12">

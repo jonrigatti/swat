@@ -10,7 +10,7 @@
         <v-row>
           <v-col cols="12">
             <v-data-iterator
-              :items="submittals.submittals"
+              :items="filteredSubmittals"
               item-key="_id"
               :items-per-page.sync="itemsPerPage"
               :page.sync="page"
@@ -118,12 +118,18 @@
                     >
                       NR Informed
                     </v-btn>
+                    <v-btn
+                      dense
+                      color="grey darken-3"
+                      @click="submittalFilter2.open = !submittalFilter2.open"
+                    >
+                      Open
+                    </v-btn>
                   </v-btn-toggle>
                   {{ submittalFilter.coreType }}
                   {{ submittalFilter.owner }}
                   {{ submittalFilter.peerReviewNeeded }}
                   {{ sortDesc }}
-                  <!-- {{ filteredSubmittals }} -->
                 </v-toolbar>
               </template>
 
@@ -136,10 +142,70 @@
                     sm="6"
                     md="4"
                     lg="3"
-                    v-show="filteredSubmittals.includes(item)"
+                    
                   >
                     <Submittal :submittal="item" />
                   </v-col>
+                </v-row>
+              </template>
+              <template v-slot:footer>
+                <v-row
+                  class="mt-2"
+                  align="center"
+                  justify="center"
+                >
+                  <span class="grey--text">Items per page</span>
+                  <v-menu offset-y>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        dark
+                        text
+                        color="primary"
+                        class="ml-2"
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        {{ itemsPerPage }}
+                        <v-icon>mdi-chevron-down</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item
+                        v-for="(number, index) in itemsPerPageArray"
+                        :key="index"
+                        @click="updateItemsPerPage(number)"
+                      >
+                        <v-list-item-title>{{ number }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+
+                  <v-spacer></v-spacer>
+
+                  <span
+                    class="mr-4
+                    grey--text"
+                  >
+                    Page {{ page }} of {{ numberOfPages }}
+                  </span>
+                  <v-btn
+                    fab
+                    dark
+                    color="blue darken-3"
+                    class="mr-1"
+                    @click="formerPage"
+                  >
+                    <v-icon>mdi-chevron-left</v-icon>
+                  </v-btn>
+                  <v-btn
+                    fab
+                    dark
+                    color="blue darken-3"
+                    class="ml-1"
+                    @click="nextPage"
+                  >
+                    <v-icon>mdi-chevron-right</v-icon>
+                  </v-btn>
                 </v-row>
               </template>
             </v-data-iterator>
@@ -151,22 +217,22 @@
     <v-container fluid class="my-1">
       <v-data-table
         :headers="headers"
-        :items="submittals.submittals"
+        :items="filteredSubmittals"
         :sort-by="['submittalID', 'owner']"
         :sort-desc="[false, true]"
         multi-sort
         show-expand
         :expanded.sync="expanded"
       >
-        <template v-slot:item.submittalID="props">
+        <template v-slot:item.description="props">
           <v-edit-dialog
-            :return-value.sync="props.item.submittalID"
+            :return-value.sync="props.item.description"
           >
-            {{ props.item.submittalID }}
+            {{ props.item.description }}
             <template v-slot:input>
               <v-text-field
-                v-model="props.item.submittalID"
-                :rules="[max25chars]"
+                v-model="props.item.description"
+                :rules="[maxchars]"
                 label="Edit"
                 single-line
                 counter
@@ -175,17 +241,54 @@
           </v-edit-dialog>          
         </template>
 
-        <template v-slot:expanded-item="{ headers, item }">
-          <td :colspan="headers.length">
-            More info about {{ item.submittalID }}
-          </td>
+        <template v-slot:item.needDate="{ item }">
+          <Datepicker :dateProp="item.needDate" iconProp="mdi-calendar-clock" @update-date="(date) => item.needDate = date" />
+        </template>
+        
+        <template v-slot:item.dispositionDate="{ item }">
+          <Datepicker :dateProp="item.dispositionDate" iconProp="mdi-calendar-check" @update-date="(date) => item.needDate = date" />
         </template>
 
-        <template v-slot:item.priority="{ item }">
-        <v-simple-checkbox
-          v-model="item.priority"
-        ></v-simple-checkbox>
-      </template>
+        <template v-slot:item.dispositionDate="{ item }">
+          <span v-for="project in projects.projects" :key="project._id" v-show="project.prioritySubmittals.findIndex(s => { return s.submittal._id === item._id }) != -1">
+            <v-menu
+                offset-y
+            >
+                <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                    class="ma-2"
+                    v-bind="attrs"
+                    v-on="on"
+                >
+                    {{ project.name }} - {{ project.prioritySubmittals.findIndex(s => { return s.submittal._id === item._id }) + 1}}
+                </v-btn>
+                </template>
+                <v-card>
+                    <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" handle=".handle" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
+                    <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === item._id ? 'item draggable-item handle' : 'item nondraggable-item'">
+                        {{ index + 1 }}. {{s.submittal.submittalID}}
+                    </v-col>
+                    </draggable>
+                </v-card>
+            </v-menu>
+        </span>
+        </template>
+
+        <template v-slot:item.save="{ item }">
+          <v-btn
+            icon
+            @click="saveSubmittal(item)"
+          >
+            <v-icon>mdi-content-save-edit</v-icon>
+          </v-btn>
+        </template>
+
+        <template v-slot:expanded-item="{ headers, item }">
+          <td :colspan="headers.length">
+            <Stakeholders :stakeholders="item.stakeholders" />
+            <Violations :violations="item.violations" />
+          </td>
+        </template>
       </v-data-table>
     </v-container>
   </div>
@@ -195,11 +298,14 @@
 <!-- https://terabytetiger.com/lessons/moving-from-vue-2-to-vue-3-composition-api -->
 <script setup>
   import Submittal from './Submittal.vue';
+  import Stakeholders from './Stakeholders.vue';
+  import Violations from './Violations.vue';
+  import Datepicker from './Datepicker.vue';
   import SubmittalSearch from './SubmittalSearch.vue';
   import draggable from 'vuedraggable';
-  import { useSubmittalsStore } from '../stores/SubmittalsStore'
-  import { useProjectsStore } from '../stores/ProjectsStore'
-  import { ref, computed } from 'vue'
+  import { useSubmittalsStore } from '../stores/SubmittalsStore';
+  import { useProjectsStore } from '../stores/ProjectsStore';
+  import { ref, computed } from 'vue';
   import filter from 'lodash/filter';
 
   const submittals = useSubmittalsStore();
@@ -211,7 +317,7 @@
   // console.log(JSON.stringify(projects.projects));
 
   // Data
-  const itemsPerPageArray = [4, 8, 12];
+  const itemsPerPageArray = [5, 10, 20, 100];
   const search = ref('');
   const submittalFilter = ref({
     coreType: ['A', 'B', 'C', 'D'],
@@ -219,7 +325,8 @@
   });  
   const submittalFilter2 = ref({
     peerReviewNeeded: false,
-    nrInformed: false
+    nrInformed: false,
+    open: false
   });
   const sortDesc = ref(false);
   const page = ref(1);
@@ -233,17 +340,16 @@
   ];
   const expanded = ref([]);
   const singleExpand = ref(false);
-  const max25chars = v => v.length <= 25 || 'Input too long!';
+  const maxchars = v => v.length <= 200 || 'Input too long!';
   const pagination = ref({});
   const headers = [
-    {
-      text: 'Submittal',
-      align: 'start',
-      value: 'submittalID',
-    },
-    { text: 'Need Date', value: 'needDate' },
-    { text: 'Owner', value: 'owner' },
+    { text: 'Submittal', align: 'start', value: 'submittalID', width: '140px' },
+    { text: 'Description', value: 'description' },
+    { text: 'Need Date', value: 'needDate', width: '185px' },
+    { text: 'Disposition Date', value: 'dispositionDate', width: '185px' },
     { text: 'Priority', value: 'priority' },
+    { text: 'Owner', value: 'owner' },
+    { text: '', value: 'save', sortable: false},
     { text: '', value: 'data-table-expand' }
   ];
   const coreTypes = [
@@ -261,9 +367,10 @@
   const drag = false;
 
   // Methods
-  const close = () => {
-    console.log('Dialog closed')
-  }
+  const saveSubmittal = (submittal) => {
+        // console.log('Submittals: ' + JSON.stringify(submittal));
+        submittals.updateSubmittal(submittal);
+    }
 
   const selectAllNone = (prop, allNone) => {
     if(allNone = 'all')
@@ -274,7 +381,7 @@
     {
       submittalFilter.value.prop = []
     }
-  }
+  };
 
   const sortUpdate = (project) => {
     // console.log('priority: ' + JSON.stringify(project.prioritySubmittals));
@@ -284,7 +391,22 @@
     // emit('update-submittal-priorities', project)
   }
 
+  const nextPage = () => {
+        if (page.value + 1 <= numberOfPages.value) page.value += 1
+      };
+  const formerPage = () => {
+        if (page.value - 1 >= 1) page.value -= 1
+      };
+  const updateItemsPerPage = (number) => {
+        itemsPerPage.value = number
+      };
+
   // Computed
+  
+  const numberOfPages = computed(() => {
+        return Math.ceil(filteredSubmittals.value.length / itemsPerPage.value)
+      });
+
   const filteredSubmittals = computed(() => {
 
     return submittals.submittals.filter((s) => {
@@ -300,7 +422,7 @@
         if(submittalFilter2.value[key]) {
           everyArray.push(s[key] === submittalFilter2.value[key])
         }
-        console.log(submittalFilter2.value[key]);
+        // console.log(submittalFilter2.value[key]);
       }
 
       return [someArray.some(sA => sA)].concat(everyArray).every(e => e);

@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex flex-wrap justify-center">
-        <div v-for="(stakeholder, index) in stakeholders" :key="stakeholder.name">
+        <div v-for="(stakeholder, index) in stakeholders" :key="stakeholder._id">
             <Stakeholder :stakeholder="stakeholder" @delete-stakeholder="deleteStakeholder(index)"/>
         </div>
         <v-btn

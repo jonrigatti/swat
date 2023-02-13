@@ -11,11 +11,8 @@
             <v-card-text>
                 <v-text-field v-model="submittal.description" label="Description"></v-text-field>                
                 <v-text-field v-model="submittal.owner" label="Owner"></v-text-field>
-                <Datepicker :dateProp="submittal.needDate" labelProp="Need Date" iconProp="mdi-calendar-blank" @update-date="(date) => submittal.needDate = date" />        
-                <Datepicker :dateProp="submittal.dispositionDate" labelProp="Disposition Date" iconProp="mdi-calendar-blank" @update-date="(date) => submittal.dispositionDate = date" />
-                <div>Contract: {{ submittal.contract }}</div>            
-                <div>Peer Review Needed: {{ submittal.peerReviewNeeded }}</div>
-                <div>NR Informed: {{ submittal.nrInformed }}</div>
+                <Datepicker :dateProp="submittal.needDate" labelProp="Need Date" iconProp="mdi-calendar-clock" @update-date="(date) => submittal.needDate = date" />        
+                <Datepicker :dateProp="submittal.dispositionDate" labelProp="Disposition Date" iconProp="mdi-calendar-check" @update-date="(date) => submittal.dispositionDate = date" />
                 <div>
                     Priority:
                     <span v-for="project in projects.projects" :key="project._id" v-show="project.prioritySubmittals.findIndex(s => { return s.submittal._id === submittal._id }) != -1">
@@ -42,16 +39,16 @@
                     </span>
                 </div>
             </v-card-text>
-            <v-card>
+            <v-card class="py-1">
                 <v-card-title class="pa-2">Stakeholders</v-card-title>
-                <v-card-text v-show="!expanded">
+                <v-card-text v-show="expanded">
                     <Stakeholders :stakeholders="submittal.stakeholders" />
                 </v-card-text>
             </v-card>
-            <v-card>
+            <v-card class="py-1">
                 <v-card-title class="pa-2">Violations</v-card-title>
                 <v-card-text>
-                    <Violations :violations="submittal.violations" v-show="!expanded" @add-violation="addViolation($event, index)" />
+                    <Violations :violations="submittal.violations" v-show="expanded" @add-violation="addViolation($event, index)" />
                 </v-card-text>
             </v-card>
             <v-card-actions class="grey darken-4">
@@ -113,28 +110,6 @@
     const drag = ref(false);
 
     // Methods
-    const save = () => {
-        snack.value = true
-        snackColor.value = 'success'
-        snackText.value = 'Data saved'
-    }
-
-    const cancel = () => {
-        snack.value = true
-        snackColor.value = 'error'
-        snackText.value = 'Canceled'
-    }
-
-    const open = () => {
-        snack.value = true
-        snackColor.value = 'info'
-        snackText.value = 'Dialog opened'
-    }
-
-    const close = () => {
-        console.log('Dialog closed')
-    }
-
     const saveSubmittal = (submittal) => {
         // console.log('Submittals: ' + JSON.stringify(submittal));
         submittals.updateSubmittal(submittal);
