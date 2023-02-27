@@ -18,6 +18,7 @@
               :sort-by="sortBy"
               :sort-desc="sortDesc"
               hide-default-footer
+              v-if="submittalview === 'cards'"
             >
               <template v-slot:header>
                 <v-toolbar dark color="purple darken-3" class="mb-1">
@@ -214,7 +215,7 @@
       </v-container>
     </template>
 
-    <v-container fluid class="my-1">
+    <v-container fluid class="my-1" v-if="submittalview === 'table'">
       <v-data-table
         :headers="headers"
         :items="filteredSubmittals"
@@ -246,10 +247,10 @@
         </template>
         
         <template v-slot:item.dispositionDate="{ item }">
-          <Datepicker :dateProp="item.dispositionDate" iconProp="mdi-calendar-check" @update-date="(date) => item.needDate = date" />
+          <Datepicker :dateProp="item.dispositionDate" iconProp="mdi-calendar-check" @update-date="(date) => item.dispositionDate = date" />
         </template>
 
-        <template v-slot:item.dispositionDate="{ item }">
+        <template v-slot:item.priority="{ item }">
           <span v-for="project in projects.projects" :key="project._id" v-show="project.prioritySubmittals.findIndex(s => { return s.submittal._id === item._id }) != -1">
             <v-menu
                 offset-y
@@ -284,8 +285,10 @@
         </template>
 
         <template v-slot:expanded-item="{ headers, item }">
-          <td :colspan="headers.length">
-            <Stakeholders :stakeholders="item.stakeholders" />
+          <td :colspan="headers.length" class="pa-0 ma-0">
+            <v-card-title class="pa-2">Stakeholders</v-card-title>
+            <Stakeholders :stakeholders="item.stakeholders" view="table" />            
+            <v-card-title class="pa-2">Violations</v-card-title>
             <Violations :violations="item.violations" />
           </td>
         </template>
@@ -317,6 +320,13 @@
   // console.log(JSON.stringify(projects.projects));
 
   // Data
+  const props = defineProps({
+        submittalview: {
+            type: String,
+            default: 'cards'
+          }
+    });
+
   const itemsPerPageArray = [5, 10, 20, 100];
   const search = ref('');
   const submittalFilter = ref({

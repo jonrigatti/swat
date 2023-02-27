@@ -26,8 +26,12 @@
       <v-icon>mdi-magnify</v-icon>
     </v-btn>
 
-    <v-btn icon>
-      <v-icon>mdi-heart</v-icon>
+    <v-btn icon @click="toggleSubmittalView('table')" v-show="submittalview=='cards'">
+      <v-icon>mdi-table</v-icon>
+    </v-btn>
+    
+    <v-btn icon @click="toggleSubmittalView('cards')" v-show="submittalview=='table'">
+      <v-icon>mdi-cards</v-icon>
     </v-btn>
 
     <v-btn icon>
@@ -45,9 +49,15 @@
 </template>
 
 <script setup>
-
+  import { ref } from 'vue';
+  import router from '@/router';
+  
   const title = "Submittal Workflow and Tracking";
-
+  const submittalview = ref('cards');
+  const toggleSubmittalView = (view) => {
+        submittalview.value = view;
+        router.push({ path: '/submittals/'+view });
+    }
 </script>
 
 <style scoped>

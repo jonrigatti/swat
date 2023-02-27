@@ -1,6 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
+import Submittals from "../components/Submittals.vue";
+import Projects from "../components/Projects.vue";
 
 Vue.use(VueRouter);
 
@@ -8,25 +10,18 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: Home,
+    component: Home
   },
   {
-    path: "/submittals",
+    path: "/submittals/:submittalview?",
     name: "Submittals",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Submittals.vue"),
+    component: Submittals,
+    props: true
   },
   {
     path: "/projects",
     name: "Projects",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Projects.vue"),
+    component: Projects
   },
 ];
 
