@@ -22,15 +22,19 @@
 
     <v-spacer></v-spacer>
 
-    <v-btn icon>
+    <v-btn icon @click="app.submittalSearch = true" v-show="app.submittalSearch == false">
       <v-icon>mdi-magnify</v-icon>
     </v-btn>
 
-    <v-btn icon @click="toggleSubmittalView('table')" v-show="submittalview=='cards'">
+    <v-btn icon @click="app.submittalSearch = false" v-show="app.submittalSearch == true">
+      <v-icon>mdi-magnify-close</v-icon>
+    </v-btn>
+
+    <v-btn icon @click="app.submittalView = 'table'" v-show="app.submittalView=='cards'">
       <v-icon>mdi-table</v-icon>
     </v-btn>
     
-    <v-btn icon @click="toggleSubmittalView('cards')" v-show="submittalview=='table'">
+    <v-btn icon @click="app.submittalView = 'cards'" v-show="app.submittalView=='table'">
       <v-icon>mdi-cards</v-icon>
     </v-btn>
 
@@ -49,15 +53,18 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue';
-  import router from '@/router';
+  // import { ref } from 'vue';
+  // import router from '@/router';
+  import { useAppStore } from '../stores/AppStore';
+
+  const app = useAppStore();
   
   const title = "Submittal Workflow and Tracking";
-  const submittalview = ref('cards');
-  const toggleSubmittalView = (view) => {
-        submittalview.value = view;
-        router.push({ path: '/submittals/'+view });
-    }
+  // const submittalview = ref('cards');
+  // const toggleSubmittalView = (view) => {
+  //       submittalview.value = view;
+  //       router.push({ path: '/submittals/'+view });
+  //   }
 </script>
 
 <style scoped>

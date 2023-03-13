@@ -2,7 +2,7 @@
   <div>
     <template>
       <v-container fluid>
-        <v-row>
+        <v-row v-if="app.submittalSearch">
           <v-col class="pa-0 ma-0" cols="12">
             <SubmittalSearch />
           </v-col>
@@ -18,7 +18,7 @@
               :sort-by="sortBy"
               :sort-desc="sortDesc"
               hide-default-footer
-              v-if="submittalview === 'cards'"
+              v-if="app.submittalView === 'cards'"
             >
               <template v-slot:header>
                 <v-toolbar dark color="purple darken-3" class="mb-1">
@@ -127,10 +127,6 @@
                       Open
                     </v-btn>
                   </v-btn-toggle>
-                  {{ submittalFilter.coreType }}
-                  {{ submittalFilter.owner }}
-                  {{ submittalFilter.peerReviewNeeded }}
-                  {{ sortDesc }}
                 </v-toolbar>
               </template>
 
@@ -215,10 +211,11 @@
       </v-container>
     </template>
 
-    <v-container fluid class="my-1" v-if="submittalview === 'table'">
+    <v-container fluid class="py-0 my-0" v-if="app.submittalView === 'table'">
       <v-data-table
         :headers="headers"
         :items="filteredSubmittals"
+        item-key="submittalID"
         :sort-by="['submittalID', 'owner']"
         :sort-desc="[false, true]"
         multi-sort
@@ -266,7 +263,7 @@
                 </template>
                 <v-card>
                     <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" handle=".handle" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
-                    <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === item._id ? 'item draggable-item handle' : 'item nondraggable-item'">
+                    <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === item._id ? 'item cyan darken-4 draggable-item handle' : 'item nondraggable-item'">
                         {{ index + 1 }}. {{s.submittal.submittalID}}
                     </v-col>
                     </draggable>
@@ -308,6 +305,7 @@
   import draggable from 'vuedraggable';
   import { useSubmittalsStore } from '../stores/SubmittalsStore';
   import { useProjectsStore } from '../stores/ProjectsStore';
+  import { useAppStore } from '../stores/AppStore';
   import { ref, computed } from 'vue';
   import filter from 'lodash/filter';
 
@@ -317,15 +315,17 @@
   const projects = useProjectsStore();
   projects.getProjects();
 
+  const app = useAppStore();
+
   // console.log(JSON.stringify(projects.projects));
 
   // Data
-  const props = defineProps({
-        submittalview: {
-            type: String,
-            default: 'cards'
-          }
-    });
+  // const props = defineProps({
+  //       submittalview: {
+  //           type: String,
+  //           default: 'cards'
+  //         }
+  //   });
 
   const itemsPerPageArray = [5, 10, 20, 100];
   const search = ref('');

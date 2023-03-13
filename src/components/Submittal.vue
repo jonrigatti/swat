@@ -9,7 +9,7 @@
                 </v-btn>
             </v-card-title>
             <v-card-text>
-                <v-text-field v-model="submittal.description" label="Description"></v-text-field>                
+                <v-text-field v-model="submittal.description" label="Description"></v-text-field>
                 <v-text-field v-model="submittal.owner" label="Owner"></v-text-field>
                 <Datepicker :dateProp="submittal.needDate" labelProp="Need Date" iconProp="mdi-calendar-clock" @update-date="(date) => submittal.needDate = date" />        
                 <Datepicker :dateProp="submittal.dispositionDate" labelProp="Disposition Date" iconProp="mdi-calendar-check" @update-date="(date) => submittal.dispositionDate = date" />
@@ -30,7 +30,7 @@
                             </template>
                             <v-card>
                                 <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" handle=".handle" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
-                                <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === submittal._id ? 'item draggable-item handle' : 'item nondraggable-item'">
+                                <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === submittal._id ? 'item cyan darken-4 draggable-item handle' : 'item nondraggable-item'">
                                     {{ index + 1 }}. {{s.submittal.submittalID}}
                                 </v-col>
                                 </draggable>
@@ -39,16 +39,16 @@
                     </span>
                 </div>
             </v-card-text>
-            <v-card class="py-1">
+            <v-card class="py-1" v-if="expanded">
                 <v-card-title class="pa-2">Stakeholders</v-card-title>
-                <v-card-text v-show="expanded">
+                <v-card-text>
                     <Stakeholders :stakeholders="submittal.stakeholders" />
                 </v-card-text>
             </v-card>
-            <v-card class="py-1">
+            <v-card class="py-1" v-if="expanded">
                 <v-card-title class="pa-2">Violations</v-card-title>
                 <v-card-text>
-                    <Violations :violations="submittal.violations" v-show="expanded" @add-violation="addViolation($event, index)" />
+                    <Violations :violations="submittal.violations" @add-violation="addViolation($event, index)" />
                 </v-card-text>
             </v-card>
             <v-card-actions class="grey darken-4">

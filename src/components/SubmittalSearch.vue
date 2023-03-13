@@ -58,7 +58,7 @@
     const submittals = useSubmittalsStore();
 
     // Data
-    const expanded = ref(false);
+    const expanded = ref(true);
     const keys = [
         { text: 'Submittal ID', value: 'submittalID' },
         { text: 'Need Date', value: 'needDate' },

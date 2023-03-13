@@ -12,8 +12,6 @@
                     {{ project.name }}
                 </v-btn>
             </v-btn-toggle>
-
-            {{ projectsToggle }}
         </v-toolbar>
 
         <v-container fluid>
@@ -31,9 +29,9 @@
                         <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
                         <v-card-subtitle class="py-0">Priority Submittals</v-card-subtitle>
                         <v-card v-for="(s, index) in project.prioritySubmittals" :key="s.submittalID" class="item draggable-item mb-2">
-                            <v-card-title class="handle">{{ index + 1 }}. {{s.submittal.submittalID }}</v-card-title>
-                            <v-card-subtitle class="py-0">{{ s.submittal.description }}</v-card-subtitle>               
-                            <v-card-text>
+                            <v-card-title class="py-1 handle">{{ index + 1 }}. {{s.submittal.submittalID }}</v-card-title>
+                            <v-card-subtitle class="pt-5 pb-1">{{ s.submittal.description }}</v-card-subtitle>
+                            <v-card-text class="py-0 my-0">
                                 <v-text-field single-line v-model="s.driver" cols="8" label="Priority driver" class="mx-6" @change="sortUpdate(project)"></v-text-field>
                             </v-card-text>
                         </v-card>
@@ -45,8 +43,8 @@
                         <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
                         <v-card-subtitle class="py-0">Unranked Submittals</v-card-subtitle>
                         <v-card v-for="s in project.unrankedSubmittals" :key="s.submittal.submittalID" class="item draggable-item mb-2">
-                            <v-card-title>{{s.submittal.submittalID }}</v-card-title>
-                            <v-card-subtitle>{{ s.submittal.description }}</v-card-subtitle>
+                            <v-card-title class="py-1 handle">{{s.submittal.submittalID }}</v-card-title>
+                            <v-card-subtitle class="pt-5 pb-1">{{ s.submittal.description }}</v-card-subtitle>
                         </v-card>
                         <!-- </transition-group> -->
                     </draggable>
