@@ -247,29 +247,8 @@
           <Datepicker :dateProp="item.dispositionDate" iconProp="mdi-calendar-check" @update-date="(date) => item.dispositionDate = date" />
         </template>
 
-        <template v-slot:item.priority="{ item }">
-          <span v-for="project in projects.projects" :key="project._id" v-show="project.prioritySubmittals.findIndex(s => { return s.submittal._id === item._id }) != -1">
-            <v-menu
-                offset-y
-            >
-                <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                    class="ma-2"
-                    v-bind="attrs"
-                    v-on="on"
-                >
-                    {{ project.name }} - {{ project.prioritySubmittals.findIndex(s => { return s.submittal._id === item._id }) + 1}}
-                </v-btn>
-                </template>
-                <v-card>
-                    <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" handle=".handle" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
-                    <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === item._id ? 'item cyan darken-4 draggable-item handle' : 'item nondraggable-item'">
-                        {{ index + 1 }}. {{s.submittal.submittalID}}
-                    </v-col>
-                    </draggable>
-                </v-card>
-            </v-menu>
-        </span>
+        <template v-slot:item.priority="{ item }">  
+          <PriorityMenu :submittalProp="item" />
         </template>
 
         <template v-slot:item.save="{ item }">
@@ -301,6 +280,7 @@
   import Stakeholders from './Stakeholders.vue';
   import Violations from './Violations.vue';
   import Datepicker from './Datepicker.vue';
+  import PriorityMenu from './PriorityMenu.vue';
   import SubmittalSearch from './SubmittalSearch.vue';
   import draggable from 'vuedraggable';
   import { useSubmittalsStore } from '../stores/SubmittalsStore';
@@ -310,10 +290,8 @@
   import filter from 'lodash/filter';
 
   const submittals = useSubmittalsStore();
-  submittals.getSubmittals();
 
   const projects = useProjectsStore();
-  projects.getProjects();
 
   const app = useAppStore();
 
@@ -393,14 +371,6 @@
     }
   };
 
-  const sortUpdate = (project) => {
-    // console.log('priority: ' + JSON.stringify(project.prioritySubmittals));
-    // console.log('unranked: ' + JSON.stringify(project.unrankedSubmittals));
-
-    projects.updateSubmittalPriorities(project);
-    // emit('update-submittal-priorities', project)
-  }
-
   const nextPage = () => {
         if (page.value + 1 <= numberOfPages.value) page.value += 1
       };
@@ -448,28 +418,5 @@
   }
   .v-select.fit  .v-select__selection--comma {
       text-overflow: unset;
-  }
-
-  .handle {
-    cursor: move !important;
-    cursor: -webkit-grabbing !important;
-  }
-  .draggable-item {
-    cursor: move !important;
-    cursor: -webkit-grabbing !important;
-    user-select: none;
-  }
-  .nondraggable-item {
-    user-select: none;
-  }
-  .ghost {
-  opacity: 0.5;
-  background: darkcyan;
-}
-  .flip-list-move {
-  transition: transform 0.5s;
-}
-  .no-move {
-    transition: transform 0s;
   }
 </style>

@@ -2,7 +2,7 @@ const { Schema } = require("mongoose");
 
 module.exports = mongoose => {
     const Project = mongoose.model(
-        "project",
+        'project',
         mongoose.Schema(
             {
                 name: String,

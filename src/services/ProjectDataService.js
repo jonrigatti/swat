@@ -17,7 +17,7 @@ class ProjectDataService {
         console.log('Update beginning: ' + JSON.stringify(data));
         return http.put(`/projects/${id}`, data)
         .then(function (response) {
-            console.log('Then: ' + JSON.stringify(data));
+            // console.log('Then: ' + JSON.stringify(data));
             console.log(response);
         });
     }

@@ -27,6 +27,9 @@
                     <v-col cols="6" align-self="start">
                     <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" handle=".handle" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
                         <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
+
+                            <!-- It's actually dragging the one under whatever is selected... -->
+                            
                         <v-card-subtitle class="py-0">Priority Submittals</v-card-subtitle>
                         <v-card v-for="(s, index) in project.prioritySubmittals" :key="s.submittalID" class="item draggable-item mb-2">
                             <v-card-title class="py-1 handle">{{ index + 1 }}. {{s.submittal.submittalID }}</v-card-title>
@@ -63,10 +66,8 @@
     import { ref } from 'vue'
 
     const submittals = useSubmittalsStore();
-    submittals.getSubmittals();
 
     const projects = useProjectsStore();
-    projects.getProjects();
 
     const projectsToggle = ref(projects.projects.map(p => p.name));
 

@@ -76,7 +76,7 @@ SubmittalSchema.virtual('open').get(function() {
 
 module.exports = mongoose => {
     const Submittal = mongoose.model(
-        "submittal",
+        'submittal',
         mongoose.Schema(SubmittalSchema
         )
     );

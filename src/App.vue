@@ -13,7 +13,15 @@
 </template>
 
 <script setup>
-  import Header from './components/Header'
+  import Header from './components/Header'  
+  import { useSubmittalsStore } from './stores/SubmittalsStore';
+  import { useProjectsStore } from './stores/ProjectsStore';
+
+  const submittals = useSubmittalsStore();
+  submittals.getSubmittals();
+
+  const projects = useProjectsStore();
+  projects.getProjects();
 </script>
 
 <style>

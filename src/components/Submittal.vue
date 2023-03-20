@@ -15,28 +15,7 @@
                 <Datepicker :dateProp="submittal.dispositionDate" labelProp="Disposition Date" iconProp="mdi-calendar-check" @update-date="(date) => submittal.dispositionDate = date" />
                 <div>
                     Priority:
-                    <span v-for="project in projects.projects" :key="project._id" v-show="project.prioritySubmittals.findIndex(s => { return s.submittal._id === submittal._id }) != -1">
-                        <v-menu
-                            offset-y
-                        >
-                            <template v-slot:activator="{ on, attrs }">
-                            <v-btn
-                                class="ma-2"
-                                v-bind="attrs"
-                                v-on="on"
-                            >
-                                {{ project.name }} - {{ project.prioritySubmittals.findIndex(s => { return s.submittal._id === submittal._id }) + 1}}
-                            </v-btn>
-                            </template>
-                            <v-card>
-                                <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" handle=".handle" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
-                                <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === submittal._id ? 'item cyan darken-4 draggable-item handle' : 'item nondraggable-item'">
-                                    {{ index + 1 }}. {{s.submittal.submittalID}}
-                                </v-col>
-                                </draggable>
-                            </v-card>
-                        </v-menu>
-                    </span>
+                    <PriorityMenu :submittalProp="submittal" />
                 </div>
             </v-card-text>
             <v-card class="py-1" v-if="expanded">
@@ -85,25 +64,22 @@
 <script setup>
     import Stakeholder from './Stakeholder.vue';
     import Stakeholders from './Stakeholders.vue';
-    import Violations from './Violations.vue';
+    import Violations from './Violations.vue';;
     import Datepicker from './Datepicker.vue'
+    import PriorityMenu from './PriorityMenu.vue';
     import draggable from 'vuedraggable';
-    import { useSubmittalsStore } from '../stores/SubmittalsStore'
-    import { useProjectsStore } from '../stores/ProjectsStore'
-    import ServerDataService from '../services/ServerDataService'
-    import { ref, computed } from 'vue'
+    import { useSubmittalsStore } from '../stores/SubmittalsStore';
+    import { useProjectsStore } from '../stores/ProjectsStore';
+    import ServerDataService from '../services/ServerDataService';
+    import { ref, computed } from 'vue';
 
     const props = defineProps({
         submittal: {}
     });
 
     const submittals = useSubmittalsStore();
-    // submittals.getSubmittals();
 
     const projects = useProjectsStore();
-    // projects.getProjects();
-
-    // console.log(JSON.stringify(projects.projects));
 
     // Data
     const expanded = ref(false);
@@ -117,14 +93,6 @@
 
     const addViolation = (violation, index) => {
         submittals.submittals.find(submittal => submittal._id === filteredSubmittals.value[index]._id).violations.push(violation);
-    }
-
-    const sortUpdate = (project) => {
-        // console.log('priority: ' + JSON.stringify(project.prioritySubmittals));
-        // console.log('unranked: ' + JSON.stringify(project.unrankedSubmittals));
-
-        projects.updateSubmittalPriorities(project);
-        // emit('update-submittal-priorities', project)
     }
 
     const createSDF = (submittal) => {

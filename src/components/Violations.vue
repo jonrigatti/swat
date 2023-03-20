@@ -291,12 +291,12 @@
 		var nv = newViolation.value
 		switch(referenceType.value) {
 			case 'code':
-				console.log('Hey it be a code boye')
+				// console.log('Hey it be a code boye')
 				delete nv.reference.drawing;
 				delete nv.reference.coordinates;
 				break;
 			case 'drawing':                        
-				console.log('Hey it be a draw boye')
+				// console.log('Hey it be a draw boye')
 				delete nv.reference.chapter;
 				delete nv.reference.paragraph;
 				break;

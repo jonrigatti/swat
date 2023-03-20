@@ -39,7 +39,7 @@ exports.findAll = (req, res) => {
     .populate('unrankedSubmittals.submittal', 'submittalID description needDate')    
     // .populate('unrankedSubmittals', ['submittalID', 'description', 'needDate'])
     .then(data => {
-        console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(data));
         res.send(data);
     })
     .catch(err => {
