@@ -39,7 +39,7 @@ export const useProjectsStore = defineStore('ProjectsStore', {
             ProjectDataService.getAll()
                 .then(response => {
                     this.projects = response.data;
-                    // console.log(response.data);
+                    // console.log('store: ' + response.data);
                 })
                 .catch(e => {
                     console.log(e);

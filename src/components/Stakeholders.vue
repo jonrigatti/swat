@@ -6,9 +6,9 @@
             </div>
             <v-btn
                     rounded
-                    width="220"
+                    width="200"
                     height="100"
-                    class="align-self-center"
+                    class="align-self-center ma-2"
                     @click="addingStakeholder = !addingStakeholder"
                     v-show="!addingStakeholder"
                 >

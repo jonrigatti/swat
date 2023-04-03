@@ -4,6 +4,7 @@ const SubmittalSchema = new Schema(
     {
         submittalID: String,
         description: String,
+        receivedDate: Date,
         needDate: Date,
         dispositionDate: Date,
         owner: String,

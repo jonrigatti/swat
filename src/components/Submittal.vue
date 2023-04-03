@@ -11,8 +11,16 @@
             <v-card-text>
                 <v-text-field v-model="submittal.description" label="Description"></v-text-field>
                 <v-text-field v-model="submittal.owner" label="Owner"></v-text-field>
-                <Datepicker :dateProp="submittal.needDate" labelProp="Need Date" iconProp="mdi-calendar-clock" @update-date="(date) => submittal.needDate = date" />        
-                <Datepicker :dateProp="submittal.dispositionDate" labelProp="Disposition Date" iconProp="mdi-calendar-check" @update-date="(date) => submittal.dispositionDate = date" />
+                <v-container>
+                    <v-row>
+                        <v-col>
+                            <Datepicker :dateProp="submittal.needDate" labelProp="Need Date" iconProp="mdi-calendar-clock" @update-date="(date) => submittal.needDate = date" />
+                        </v-col>
+                        <v-col>
+                            <Datepicker :dateProp="submittal.dispositionDate" labelProp="Disposition Date" iconProp="mdi-calendar-check" @update-date="(date) => submittal.dispositionDate = date" />
+                        </v-col>
+                    </v-row>
+                </v-container>
                 <div>
                     Priority:
                     <PriorityMenu :submittalProp="submittal" />

@@ -55,7 +55,7 @@
                 </v-toolbar>
                 <v-toolbar dark color="blue darken-3" class="mb-1">
                   <v-btn-toggle
-                    v-model="submittalFilter.coreType"
+                    v-model="projectFilter.projects"
                     dense
                     background-color="primary"
                     dark
@@ -63,24 +63,24 @@
                   >
                     <v-btn
                       color="purple"
-                      v-for="core in coreTypes"
-                      :key="core"
-                      :value="core"
+                      v-for="project in projects.projects"
+                      :key="project.name"
+                      :value="project.name"
                     >
-                      {{ core }}
+                      {{ project.name }}
                     </v-btn>
                   </v-btn-toggle>
                   <v-btn
                     dense
                     color="red darken-3"
-                    @click="() => submittalFilter.coreType = coreTypes"
+                    @click="() => projectFilter.projects = ['A', 'B', 'C', 'D']"
                   >
                     All
                   </v-btn>                
                   <v-btn
                     dense
                     color="red darken-3"
-                    @click="() => submittalFilter.coreType = []"
+                    @click="() => projectFilter.projects = []"
                   >
                     None
                   </v-btn>
@@ -214,7 +214,7 @@
     <v-container fluid class="py-0 my-0" v-if="app.submittalView === 'table'">
       <v-data-table
         :headers="headers"
-        :items="filteredSubmittals"
+        :items="submittals.submittals"
         item-key="submittalID"
         :sort-by="['submittalID', 'owner']"
         :sort-desc="[false, true]"
@@ -308,14 +308,15 @@
   const itemsPerPageArray = [5, 10, 20, 100];
   const search = ref('');
   const submittalFilter = ref({
-    coreType: ['A', 'B', 'C', 'D'],
+    // coreType: ['A', 'B', 'C', 'D'],
     owner: []
-  });  
+  });
   const submittalFilter2 = ref({
     peerReviewNeeded: false,
     nrInformed: false,
     open: false
   });
+  const projectFilter = ref(['A', 'B', 'C', 'D']);
   const sortDesc = ref(false);
   const page = ref(1);
   const itemsPerPage = ref(10);
@@ -324,7 +325,7 @@
     { text: 'Submittal ID', value: 'submittalID' },
     { text: 'Need Date', value: 'needDate' },
     { text: 'Owner', value: 'owner' },
-    { text: 'Contract', value: 'contract' }
+    // { text: 'Contract', value: 'contract' }
   ];
   const expanded = ref([]);
   const singleExpand = ref(false);
@@ -333,6 +334,7 @@
   const headers = [
     { text: 'Submittal', align: 'start', value: 'submittalID', width: '140px' },
     { text: 'Description', value: 'description' },
+    { text: 'Received Date', value: 'receivedDate', width: '185px' },
     { text: 'Need Date', value: 'needDate', width: '185px' },
     { text: 'Disposition Date', value: 'dispositionDate', width: '185px' },
     { text: 'Priority', value: 'priority' },
@@ -347,9 +349,10 @@
     'D'
   ];
   const owners = [
-    'Blahsievsky',
-    'Blaherson',
-    'McBlah',
+    'Corbet Camber',
+    'Mason Roobottom',
+    'Marchelle Haker',
+    'Harietta Hentzer'
   ];
   
   const drag = false;
@@ -396,6 +399,7 @@
           return s[key] === i;
         }));
       }
+      // console.log(someArray);
 
       var everyArray = [];
       for(const key in submittalFilter2.value){
@@ -405,7 +409,47 @@
         // console.log(submittalFilter2.value[key]);
       }
 
-      return [someArray.some(sA => sA)].concat(everyArray).every(e => e);
+      // console.log(JSON.stringify(projects.projects));
+      var projectArray = [];
+      // var filteredProjects = projects.projects.filter(project => !['A','B'].includes(project.name));
+
+      var filteredProjects  = projects.projects.filter(function(project){
+        return projectFilter.value.filter(function(pF){
+            return pF == project.name;
+        }).length == 0
+      });
+      console.log(filteredProjects);
+
+
+      // projects.projects.filter(project => !projectFilter.value.includes(project.name)).forEach((project) => {
+      filteredProjects.forEach((project) => {
+        project.contracts.forEach((contract) => {
+          if(s.contract === contract.contractID){
+            projectArray.push(s);
+            // console.log(s.submittalID);
+          }
+          // console.log(s.contract);
+        });
+        // console.log(JSON.stringify(project));
+      });
+      // for(const p in projectFilter.value){
+      //   for(const project in projects.projects.value){
+      //     console.log(project.name)
+      //     if(project.name === p){
+      //       console.log(project.name);
+      //       for(const contract in project.contracts){
+      //         if(s.contract === contract.contractID){
+      //           projectArray.push(s);
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
+
+      // return [someArray.some(sA => sA)].concat(everyArray).every(e => e);
+      // console.log(someArray.some(sA => sA));
+      // return [].concat(someArray.some(sA => sA), everyArray.every(e => e), projectArray);
+      return [projectArray];
     });
 
 
