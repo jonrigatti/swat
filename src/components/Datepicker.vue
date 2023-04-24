@@ -40,6 +40,10 @@
         iconProp: {
             type: String,
             default: 'mdi-calendar-blank'
+        },
+        returnISODate: {
+            type: Boolean,
+            default: true
         }
     });
 
@@ -65,7 +69,7 @@
         dateMenu.value = false;
         deleteDialog.value = false;
         // props.dateProp = dayjs(date).toISOString();
-        emit('update-date', dayjs(date).toISOString());
+        emit('update-date', props.returnISODate ? dayjs(date).toISOString() : dayjs(date).format('MM/DD/YYYY'));
     }
     const emit = defineEmits(['update-date']);
 </script>

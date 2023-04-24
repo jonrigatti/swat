@@ -72,8 +72,8 @@
 <script setup>
     import Stakeholder from './Stakeholder.vue';
     import Stakeholders from './Stakeholders.vue';
-    import Violations from './Violations.vue';;
-    import Datepicker from './Datepicker.vue'
+    import Violations from './Violations.vue';
+    import Datepicker from './Datepicker.vue';
     import PriorityMenu from './PriorityMenu.vue';
     import draggable from 'vuedraggable';
     import { useSubmittalsStore } from '../stores/SubmittalsStore';

@@ -30,7 +30,8 @@
                                         <v-select v-model="qf.key" label="Search field" item-text="text" item-value="value" :items="queryKeyOptions" class="pa-1 ma-1"></v-select>
                                     </v-col>
                                     <v-col cols="4">
-                                        <v-text-field v-model="qf.value" label="Value" class="pa-1 ma-1"></v-text-field>
+                                        <v-text-field v-model="qf.value" label="Value" class="pa-1 ma-1" v-show="qf.key.type != 'Date'"></v-text-field>
+                                        <Datepicker v-show="qf.key.type == 'Date'" :dateProp="qf.value" labelProp="Value" iconProp="mdi-calendar" @update-date="(date) => qf.value = date"/>
                                     </v-col>
                                     <v-col>
                                         <v-btn @click="deleteQueryField(queryFields.indexOf(qf))">
@@ -52,8 +53,9 @@
 </template>
 
 <script setup>
-    import { computed, defineEmits, ref } from 'vue'
-    import { useSubmittalsStore } from '../stores/SubmittalsStore'
+    import { computed, defineEmits, ref } from 'vue';
+    import { useSubmittalsStore } from '../stores/SubmittalsStore';
+    import Datepicker from './Datepicker.vue';
 
     const submittals = useSubmittalsStore();
 

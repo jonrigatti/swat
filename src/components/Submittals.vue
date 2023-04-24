@@ -310,7 +310,6 @@
   </div>
 </template>
 
-
 <!-- https://terabytetiger.com/lessons/moving-from-vue-2-to-vue-3-composition-api -->
 <script setup>
   import Submittal from './Submittal.vue';
@@ -333,15 +332,10 @@
 
   const app = useAppStore();
 
-  // console.log(JSON.stringify(projects.projects));
+  // console.log(JSON.stringify(submittals.submittals));
+  console.log(JSON.stringify(projects.projects));
 
   // Data
-  // const props = defineProps({
-  //       submittalview: {
-  //           type: String,
-  //           default: 'cards'
-  //         }
-  //   });
 
   const itemsPerPageArray = [5, 10, 20, 100];
   const search = ref('');

@@ -49,7 +49,7 @@ class SubmittalDataService {
                     queryString += `&$${i.andOr}[${j}][${i.key.name}][%24options]=i}`
                     break;
                 case "Date":
-                    queryString += `&$${i.andOr}[${j}][${i.key.name}][${i.operator}]=${new Date(i.value)}`;
+                    queryString += `&$${i.andOr}[${j}][${i.key.name}][${i.operator}]=${i.value}`;
                     break;
                 case "Number":
                     // This is the same as string handling at the moment
