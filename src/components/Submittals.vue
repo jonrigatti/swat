@@ -392,17 +392,6 @@
         submittals.updateSubmittal(submittal);
     }
 
-  const selectAllNone = (prop, allNone) => {
-    if(allNone = 'all')
-    {
-      submittalFilter.value[prop] = prop
-    }
-    else
-    {
-      submittalFilter.value.prop = []
-    }
-  };
-
   const nextPage = () => {
         if (page.value + 1 <= numberOfPages.value) page.value += 1
       };
