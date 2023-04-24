@@ -8,6 +8,153 @@
           </v-col>
         </v-row>
         <v-row>
+          <v-col>
+              <v-toolbar dark color="purple darken-3" class="mb-1" v-if="app.submittalView==='cards'">
+                <v-text-field
+                  v-model="search"
+                  clearable
+                  flat
+                  solo-inverted
+                  hide-details
+                  prepend-inner-icon="mdi-magnify"
+                  label="Filter"
+                ></v-text-field>
+                <template>
+                  <v-spacer></v-spacer>
+                  <v-select
+                    v-model="sortBy"
+                    flat
+                    solo-inverted
+                    hide-details
+                    :items="keys"
+                    prepend-inner-icon="mdi-sort"
+                    label="Sort by"
+                  ></v-select>
+                  <v-spacer></v-spacer>
+                  <v-btn-toggle v-model="sortDesc" mandatory>
+                    <v-btn large depressed color="blue" :value="false">
+                      <v-icon>mdi-arrow-up</v-icon>
+                    </v-btn>
+                    <v-btn large depressed color="blue" :value="true">
+                      <v-icon>mdi-arrow-down</v-icon>
+                    </v-btn>
+                  </v-btn-toggle>
+                </template>
+              </v-toolbar>
+              <v-toolbar dark color="blue darken-3" class="mb-1">
+                <v-btn-toggle
+                  v-model="projectFilter"
+                  dense
+                  background-color="primary"
+                  dark
+                  multiple
+                >
+                  <v-btn
+                    color="purple"
+                    v-for="project in projects.projects"
+                    :key="project.name"
+                    :value="project.name"
+                  >
+                    {{ project.name }}
+                  </v-btn>
+                </v-btn-toggle>
+                <v-btn
+                  dense
+                  color="red darken-3"
+                  @click="() => projectFilter = ['A', 'B', 'C', 'D']"
+                >
+                  All
+                </v-btn>                
+                <v-btn
+                  dense
+                  color="red darken-3"
+                  @click="() => projectFilter = []"
+                >
+                  None
+                </v-btn>
+                <v-btn-toggle
+                  v-model="submittalFilter.owner"
+                  dense
+                  background-color="primary"
+                  exclusive
+                  dark
+                >
+                  <v-btn
+                    color="green"
+                    v-for="owner in owners"
+                    :key="owner"
+                    :value="owner"
+                  >
+                    {{ owner }}
+                  </v-btn>
+                </v-btn-toggle>
+                <v-btn-toggle
+                  dense
+                  background-color="primary"
+                  exclusive
+                  v-model="submittalFilter.peerReviewNeeded"
+                >                    
+                <v-btn
+                    dense
+                    color="red darken-3"
+                    :value="true"
+                  >
+                    Peer Needed
+                  </v-btn>
+                  <v-btn
+                    dense
+                    color="red darken-3"
+                    :value="false"
+                  >
+                    Peer Assigned
+                  </v-btn>
+                </v-btn-toggle>
+                <v-btn-toggle
+                  dense
+                  background-color="primary"
+                  exclusive
+                  v-model="submittalFilter.nrInformed"
+                >                    
+                  <v-btn
+                    dense
+                    color="blue darken-3"
+                    :value="true"
+                  >
+                    NR Informed
+                  </v-btn>
+                  <v-btn
+                    dense
+                    color="blue darken-3"
+                    :value="false"
+                  >
+                    NR Uninformed
+                  </v-btn>
+                </v-btn-toggle>
+                <v-btn-toggle
+                  dense
+                  background-color="primary"
+                  exclusive
+                  v-model="submittalFilter.open"
+                >                    
+                  <v-btn
+                    dense
+                    color="orange darken-3"
+                    :value="true"
+                  >
+                    Open
+                  </v-btn>
+                  <v-btn
+                    dense
+                    color="orange darken-3"
+                    :value="false"
+                  >
+                    Closed
+                  </v-btn>
+                </v-btn-toggle>
+              </v-toolbar>
+          </v-col>
+        </v-row>
+        <v-row>
           <v-col cols="12">
             <v-data-iterator
               :items="filteredSubmittals"
@@ -20,116 +167,6 @@
               hide-default-footer
               v-if="app.submittalView === 'cards'"
             >
-              <template v-slot:header>
-                <v-toolbar dark color="purple darken-3" class="mb-1">
-                  <v-text-field
-                    v-model="search"
-                    clearable
-                    flat
-                    solo-inverted
-                    hide-details
-                    prepend-inner-icon="mdi-magnify"
-                    label="Filter"
-                  ></v-text-field>
-                  <template>
-                    <v-spacer></v-spacer>
-                    <v-select
-                      v-model="sortBy"
-                      flat
-                      solo-inverted
-                      hide-details
-                      :items="keys"
-                      prepend-inner-icon="mdi-sort"
-                      label="Sort by"
-                    ></v-select>
-                    <v-spacer></v-spacer>
-                    <v-btn-toggle v-model="sortDesc" mandatory>
-                      <v-btn large depressed color="blue" :value="false">
-                        <v-icon>mdi-arrow-up</v-icon>
-                      </v-btn>
-                      <v-btn large depressed color="blue" :value="true">
-                        <v-icon>mdi-arrow-down</v-icon>
-                      </v-btn>
-                    </v-btn-toggle>
-                  </template>
-                </v-toolbar>
-                <v-toolbar dark color="blue darken-3" class="mb-1">
-                  <v-btn-toggle
-                    v-model="projectFilter.projects"
-                    dense
-                    background-color="primary"
-                    dark
-                    multiple
-                  >
-                    <v-btn
-                      color="purple"
-                      v-for="project in projects.projects"
-                      :key="project.name"
-                      :value="project.name"
-                    >
-                      {{ project.name }}
-                    </v-btn>
-                  </v-btn-toggle>
-                  <v-btn
-                    dense
-                    color="red darken-3"
-                    @click="() => projectFilter.projects = ['A', 'B', 'C', 'D']"
-                  >
-                    All
-                  </v-btn>                
-                  <v-btn
-                    dense
-                    color="red darken-3"
-                    @click="() => projectFilter.projects = []"
-                  >
-                    None
-                  </v-btn>
-                  <v-btn-toggle
-                    v-model="submittalFilter.owner"
-                    dense
-                    background-color="primary"
-                    dark
-                    multiple
-                  >
-                    <v-btn
-                      color="green"
-                      v-for="owner in owners"
-                      :key="owner"
-                      :value="owner"
-                    >
-                      {{ owner }}
-                    </v-btn>
-                  </v-btn-toggle>
-                  <v-btn-toggle
-                    dense
-                    background-color="primary"
-                    multiple
-                  >                    
-                  <v-btn
-                      dense
-                      color="grey darken-3"
-                      @click="submittalFilter2.peerReviewNeeded = !submittalFilter2.peerReviewNeeded"
-                    >
-                      Peer Review Needed
-                    </v-btn>
-                    <v-btn
-                      dense
-                      color="grey darken-3"
-                      @click="submittalFilter2.nrInformed = !submittalFilter2.nrInformed"
-                    >
-                      NR Informed
-                    </v-btn>
-                    <v-btn
-                      dense
-                      color="grey darken-3"
-                      @click="submittalFilter2.open = !submittalFilter2.open"
-                    >
-                      Open
-                    </v-btn>
-                  </v-btn-toggle>
-                </v-toolbar>
-              </template>
-
               <template v-slot:default="{ items }">
                 <v-row>
                   <v-col
@@ -183,7 +220,7 @@
                     class="mr-4
                     grey--text"
                   >
-                    Page {{ page }} of {{ numberOfPages }}
+                    Page {{ page }} of {{ numberOfPages === 0 ? 1 : numberOfPages }}
                   </span>
                   <v-btn
                     fab
@@ -287,7 +324,8 @@
   import { useProjectsStore } from '../stores/ProjectsStore';
   import { useAppStore } from '../stores/AppStore';
   import { ref, computed } from 'vue';
-  import filter from 'lodash/filter';
+  // import filter from 'lodash/filter';
+  import { filter } from 'smart-array-filter';
 
   const submittals = useSubmittalsStore();
 
@@ -308,12 +346,9 @@
   const itemsPerPageArray = [5, 10, 20, 100];
   const search = ref('');
   const submittalFilter = ref({
-    // coreType: ['A', 'B', 'C', 'D'],
-    owner: []
-  });
-  const submittalFilter2 = ref({
-    peerReviewNeeded: false,
-    nrInformed: false,
+    peerReviewNeeded: null,
+    nrInformed: null,
+    owner: null,
     open: false
   });
   const projectFilter = ref(['A', 'B', 'C', 'D']);
@@ -342,17 +377,11 @@
     { text: '', value: 'save', sortable: false},
     { text: '', value: 'data-table-expand' }
   ];
-  const coreTypes = [
-    'A',
-    'B',
-    'C',
-    'D'
-  ];
   const owners = [
     'Corbet Camber',
-    'Mason Roobottom',
-    'Marchelle Haker',
-    'Harietta Hentzer'
+    'Benedicto Durn',
+    'Floyd Salvage',
+    'Harrietta Hentzer'
   ];
   
   const drag = false;
@@ -390,69 +419,38 @@
         return Math.ceil(filteredSubmittals.value.length / itemsPerPage.value)
       });
 
-  const filteredSubmittals = computed(() => {
-
-    return submittals.submittals.filter((s) => {
-      var someArray = [];
-      for(const key in submittalFilter.value){
-        someArray.push(submittalFilter.value[key].some((i) => {
-          return s[key] === i;
-        }));
-      }
-      // console.log(someArray);
-
-      var everyArray = [];
-      for(const key in submittalFilter2.value){
-        if(submittalFilter2.value[key]) {
-          everyArray.push(s[key] === submittalFilter2.value[key])
-        }
-        // console.log(submittalFilter2.value[key]);
-      }
-
-      // console.log(JSON.stringify(projects.projects));
-      var projectArray = [];
-      // var filteredProjects = projects.projects.filter(project => !['A','B'].includes(project.name));
-
-      var filteredProjects  = projects.projects.filter(function(project){
-        return projectFilter.value.filter(function(pF){
-            return pF == project.name;
-        }).length == 0
-      });
-      console.log(filteredProjects);
-
-
-      // projects.projects.filter(project => !projectFilter.value.includes(project.name)).forEach((project) => {
-      filteredProjects.forEach((project) => {
-        project.contracts.forEach((contract) => {
-          if(s.contract === contract.contractID){
-            projectArray.push(s);
-            // console.log(s.submittalID);
-          }
-          // console.log(s.contract);
-        });
-        // console.log(JSON.stringify(project));
-      });
-      // for(const p in projectFilter.value){
-      //   for(const project in projects.projects.value){
-      //     console.log(project.name)
-      //     if(project.name === p){
-      //       console.log(project.name);
-      //       for(const contract in project.contracts){
-      //         if(s.contract === contract.contractID){
-      //           projectArray.push(s);
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
-
-      // return [someArray.some(sA => sA)].concat(everyArray).every(e => e);
-      // console.log(someArray.some(sA => sA));
-      // return [].concat(someArray.some(sA => sA), everyArray.every(e => e), projectArray);
-      return [projectArray];
+  const contracts = computed(() => {
+    var fP = projects.projects.filter(function(e) {
+      return projectFilter.value.includes(e.name)
     });
 
+    var contracts = []
+    fP.forEach(project => {
+      project.contracts.forEach(contract => {
+        !contracts.includes(contract.contractID) && contracts.push(contract.contractID);
+      });
+    });
 
+    // console.log(contracts);
+
+    return contracts;
+  })
+
+  const filteredSubmittals = computed(() => {
+    var fS = [];
+
+    contracts.value.forEach(contract => {
+      fS.push.apply(fS, filter(submittals.submittals, {
+        keywords: `submittalID:-${contract}-`
+      }));
+    });
+
+    Object.entries(submittalFilter.value).forEach(entry => {
+      const [key, value] = entry;
+      value != null && (fS = fS.filter(submittal => submittal[key]===value));
+    });
+
+    return fS;
   });  
 </script>
 

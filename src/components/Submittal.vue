@@ -9,8 +9,8 @@
                 </v-btn>
             </v-card-title>
             <v-card-text>
-                <v-text-field v-model="submittal.description" label="Description"></v-text-field>
-                <v-text-field v-model="submittal.owner" label="Owner"></v-text-field>
+                <v-text-field v-model.lazy="submittal.description" label="Description"></v-text-field>
+                <v-text-field v-model.lazy="submittal.owner" label="Owner"></v-text-field>
                 <v-container>
                     <v-row>
                         <v-col>

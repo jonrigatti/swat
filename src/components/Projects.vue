@@ -49,7 +49,7 @@
                             </v-card>
                         </draggable> -->
                         <draggable v-model="project.unrankedSubmittals" :group="project.name + 'Submittals'" draggable=".item" handle=".handle" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
-                            <v-card v-for="(s, index) in project.unrankedSubmittals" :key="s.submittal" class="item draggable-item mb-2">
+                            <v-card v-for="(s, index) in project.unrankedSubmittals" :key="s.submittal.submittalID" class="item draggable-item mb-2">
                                 <v-card-title class="py-1 handle">{{ index + 1 }}. {{s.submittal.submittalID }}</v-card-title>
                                 <v-card-subtitle class="pt-5 pb-1 nondraggable-item">{{ s.submittal.description }}</v-card-subtitle>
                                 <v-card-text class="py-0 my-0 nondraggable-item">

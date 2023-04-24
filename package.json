@@ -22,6 +22,7 @@
     "pdf-merger-js": "^4.1.1",
     "pinia": "^2.0.22",
     "qs": "^6.10.3",
+    "smart-array-filter": "^4.0.0",
     "vue": "^2.7.0",
     "vue-router": "^3.5.1",
     "vuedraggable": "^2.24.3",
