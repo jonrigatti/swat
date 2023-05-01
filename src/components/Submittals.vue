@@ -343,7 +343,7 @@
     peerReviewNeeded: null,
     nrInformed: null,
     owner: null,
-    open: false
+    open: null
   });
   const projectFilter = ref(['A', 'B', 'C', 'D']);
   const sortDesc = ref(false);

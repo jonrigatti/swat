@@ -4,10 +4,8 @@
     fixed
     color="pink darken-4"
     dark
-    shrink-on-scroll
-    prominent
-    src="https://picsum.photos/1920/1080?random"
-    fade-img-on-scroll
+    dense
+    rounded
   >
     <template v-slot:img="{ props }">
       <v-img

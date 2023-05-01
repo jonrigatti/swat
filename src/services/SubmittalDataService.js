@@ -1,4 +1,5 @@
 import http from "../http-common";
+import dayjs from 'dayjs';
 
 class SubmittalDataService {
     getAll() {
@@ -49,7 +50,15 @@ class SubmittalDataService {
                     queryString += `&$${i.andOr}[${j}][${i.key.name}][%24options]=i}`
                     break;
                 case "Date":
-                    queryString += `&$${i.andOr}[${j}][${i.key.name}][${i.operator}]=${i.value}`;
+                    // Have to search as a range because of timestamps
+                    if(i.operator == "$eq") {
+                        var nextDay = dayjs(i.value).add(1, 'day').startOf('day');
+                        queryString += `&$${i.andOr}[${j}][${i.key.name}][$gte]=${i.value}`;
+                        queryString += `&$${i.andOr}[${j}][${i.key.name}][$lt]=${nextDay.toString()}`;
+                    }
+                    else {
+                        queryString += `&$${i.andOr}[${j}][${i.key.name}][${i.operator}]=${i.value}`;
+                    }
                     break;
                 case "Number":
                     // This is the same as string handling at the moment

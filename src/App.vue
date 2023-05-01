@@ -18,7 +18,7 @@
   import { useProjectsStore } from './stores/ProjectsStore';
 
   const submittals = useSubmittalsStore();
-  submittals.getSubmittals();
+  submittals.getOpenSubmittals();
 
   const projects = useProjectsStore();
   projects.getProjects();

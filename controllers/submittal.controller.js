@@ -64,7 +64,11 @@ Submittals.findById(id)
     .then(data => {
         if (!data)
             res.status(404).send({ message: "Submittal with id " + id + " not found"});
-        else res.send(data);
+        else {
+            const withVirtuals = []
+            data.forEach(d => withVirtuals.push(d.toJSON({virtuals: true})));
+            res.send(withVirtuals);
+        };
     })
     .catch(err => {
         res
@@ -144,7 +148,9 @@ exports.findByOwner = (req, res) => {
 
     Submittals.find({ owner: o })
     .then(data => {
-        res.send(data);
+        const withVirtuals = []
+        data.forEach(d => withVirtuals.push(d.toJSON({virtuals: true})));
+        res.send(withVirtuals);
     })
     .catch(err => {
         res.status(500).send({
@@ -161,7 +167,9 @@ exports.findByViolation = (req, res) => {
 
     Submittals.find({ violations: { $elemMatch: { category: v } } })
     .then(data => {
-        res.send(data);
+        const withVirtuals = []
+        data.forEach(d => withVirtuals.push(d.toJSON({virtuals: true})));
+        res.send(withVirtuals);;
     })
     .catch(err => {
         res.status(500).send({
@@ -185,7 +193,9 @@ exports.findOpen = (req, res) => {
     ]
     })
     .then(data => {
-        res.send(data);
+        const withVirtuals = []
+        data.forEach(d => withVirtuals.push(d.toJSON({virtuals: true})));
+        res.send(withVirtuals);;
     })
     .catch(err => {
         res.status(500).send({
@@ -202,7 +212,9 @@ exports.findClosed = (req, res) => {
 
     Submittals.find({ dispositionDate: { $ne: null } })
     .then(data => {
-        res.send(data);
+        const withVirtuals = []
+        data.forEach(d => withVirtuals.push(d.toJSON({virtuals: true})));
+        res.send(withVirtuals);;
     })
     .catch(err => {
         res.status(500).send({
@@ -243,7 +255,9 @@ exports.findDynamic = (req, res) => {
 
     Submittals.find(parsedQuery)
     .then(data => {
-        res.send(data);
+        const withVirtuals = []
+        data.forEach(d => withVirtuals.push(d.toJSON({virtuals: true})));
+        res.send(withVirtuals);;
         console.log('Data: ' + JSON.stringify(data));
     })
     .catch(err => {

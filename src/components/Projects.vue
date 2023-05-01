@@ -59,6 +59,14 @@
                         <!-- </transition-group> -->
                         </draggable>
                     </v-col>
+                    <!-- <v-col cols="12">
+                        Contracts: 
+                        <div v-for="contract in project.contracts">
+                            {{  contract.contractID  }}
+                        </div>
+                        <v-text-field v-model="newContract" max-width="100"></v-text-field>
+                        <v-btn @click="project.contracts.push({contractID: newContract}); projects.updateSubmittalPriorities(project)"><v-icon>mdi-plus</v-icon></v-btn>
+                    </v-col> -->
                 </v-row>
                 </v-container>
             </v-card>
@@ -87,6 +95,8 @@
         projects.updateSubmittalPriorities(project);
         // emit('update-submittal-priorities', project)
     }
+
+    const newContract = ref('');
 </script>
 
 <style scoped>
