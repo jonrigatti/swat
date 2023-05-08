@@ -41,117 +41,160 @@
                   </v-btn-toggle>
                 </template>
               </v-toolbar>
-              <v-toolbar dark color="blue darken-3" class="mb-1">
-                <v-btn-toggle
-                  v-model="projectFilter"
-                  dense
-                  background-color="primary"
-                  dark
-                  multiple
-                >
-                  <v-btn
-                    color="purple"
-                    v-for="project in projects.projects"
-                    :key="project.name"
-                    :value="project.name"
-                  >
-                    {{ project.name }}
-                  </v-btn>
-                </v-btn-toggle>
-                <v-btn
-                  dense
-                  color="red darken-3"
-                  @click="() => projectFilter = ['A', 'B', 'C', 'D']"
-                >
-                  All
-                </v-btn>                
-                <v-btn
-                  dense
-                  color="red darken-3"
-                  @click="() => projectFilter = []"
-                >
-                  None
-                </v-btn>
-                <v-btn-toggle
-                  v-model="submittalFilter.owner"
-                  dense
-                  background-color="primary"
-                  exclusive
-                  dark
-                >
-                  <v-btn
-                    color="green"
-                    v-for="owner in owners"
-                    :key="owner"
-                    :value="owner"
-                  >
-                    {{ owner }}
-                  </v-btn>
-                </v-btn-toggle>
-                <v-btn-toggle
-                  dense
-                  background-color="primary"
-                  exclusive
-                  v-model="submittalFilter.peerReviewNeeded"
-                >                    
-                <v-btn
-                    dense
-                    color="red darken-3"
-                    :value="true"
-                  >
-                    Peer Needed
-                  </v-btn>
-                  <v-btn
-                    dense
-                    color="red darken-3"
-                    :value="false"
-                  >
-                    Peer Assigned
-                  </v-btn>
-                </v-btn-toggle>
-                <v-btn-toggle
-                  dense
-                  background-color="primary"
-                  exclusive
-                  v-model="submittalFilter.nrInformed"
-                >                    
-                  <v-btn
-                    dense
-                    color="blue darken-3"
-                    :value="true"
-                  >
-                    NR Informed
-                  </v-btn>
-                  <v-btn
-                    dense
-                    color="blue darken-3"
-                    :value="false"
-                  >
-                    NR Uninformed
-                  </v-btn>
-                </v-btn-toggle>
-                <v-btn-toggle
-                  dense
-                  background-color="primary"
-                  exclusive
-                  v-model="submittalFilter.open"
-                >                    
-                  <v-btn
-                    dense
-                    color="orange darken-3"
-                    :value="true"
-                  >
-                    Open
-                  </v-btn>
-                  <v-btn
-                    dense
-                    color="orange darken-3"
-                    :value="false"
-                  >
-                    Closed
-                  </v-btn>
-                </v-btn-toggle>
-              </v-toolbar>
+              <v-card dark color="blue darken-3" class="d-inline-flex pa-0 mb-1" width="w-100">
+                <v-container>
+                  <v-row justify="start">
+                    <v-col>
+                      <v-btn-toggle
+                        v-model="projectFilter"
+                        dense
+                        background-color="primary"
+                        dark
+                        multiple
+                      >
+                        <v-btn
+                          color="purple"
+                          v-for="project in projects.projects"
+                          :key="project.name"
+                          :value="project.name"
+                        >
+                          {{ project.name }}
+                        </v-btn>
+                      </v-btn-toggle>
+                      <v-btn
+                        dense
+                        color="red darken-3"
+                        @click="() => projectFilter = ['A', 'B', 'C', 'D']"
+                      >
+                        All
+                      </v-btn>                
+                      <v-btn
+                        dense
+                        color="red darken-3"
+                        @click="() => projectFilter = []"
+                      >
+                        None
+                      </v-btn>
+                    </v-col>
+                    <v-col>
+                      <v-container>
+                        <v-row>
+                          <v-btn-toggle
+                            v-model="unitSelect"
+                            dense
+                            background-color="primary"
+                            exclusive
+                            dark
+                          >
+                          <v-btn
+                            color="yellow darken-3"
+                            v-for="unit in units"
+                            :key="unit"
+                            :value="unit"
+                          >
+                            {{ unit }}
+                          </v-btn>
+                        </v-btn-toggle>
+                        </v-row>
+                        <v-row class="d-inline-flex">
+                          <v-item-group
+                            v-model="submittalFilter.owner"
+                            dense
+                            background-color="primary"
+                            dark
+                          >
+                            <v-item
+                              v-for="owner in owners.filter(owner => owner.unit === unitSelect)"
+                              :key="owner.name"
+                              :value="owner.name"
+                              v-slot="{ active, toggle }"
+                            >
+                              <v-btn
+                                color="green"
+                                class="ma-1 text-capitalize"
+                                active-class="black--text"
+                                :input-value="active"
+                                @click="toggle"
+                              >
+                                {{ owner.name }}
+                              </v-btn>
+                            </v-item>
+                          </v-item-group>
+                        </v-row>
+                      </v-container>
+                    </v-col>
+                    <v-col>
+                      <v-btn-toggle
+                        dense
+                        background-color="primary"
+                        exclusive
+                        v-model="submittalFilter.peerReviewNeeded"
+                      >                    
+                      <v-btn
+                          dense
+                          color="red darken-3"
+                          :value="true"
+                        >
+                          Peer Needed
+                        </v-btn>
+                        <v-btn
+                          dense
+                          color="red darken-3"
+                          :value="false"
+                        >
+                          Peer Assigned
+                        </v-btn>
+                      </v-btn-toggle>
+                    </v-col>
+                    <v-col>
+                      <v-btn-toggle
+                        dense
+                        background-color="primary"
+                        exclusive
+                        v-model="submittalFilter.nrInformed"
+                      >                    
+                        <v-btn
+                          dense
+                          color="blue darken-3"
+                          :value="true"
+                        >
+                          NR Informed
+                        </v-btn>
+                        <v-btn
+                          dense
+                          color="blue darken-3"
+                          :value="false"
+                        >
+                          NR Uninformed
+                        </v-btn>
+                      </v-btn-toggle>
+                    </v-col>
+                    <v-col>
+                      <v-btn-toggle
+                        dense
+                        background-color="primary"
+                        exclusive
+                        v-model="submittalFilter.open"
+                      >                    
+                        <v-btn
+                          dense
+                          color="orange darken-3"
+                          :value="true"
+                        >
+                          Open
+                        </v-btn>
+                        <v-btn
+                          dense
+                          color="orange darken-3"
+                          :value="false"
+                        >
+                          Closed
+                        </v-btn>
+                      </v-btn-toggle>
+                    </v-col>
+                  </v-row>
+              </v-container>
+              </v-card>
           </v-col>
         </v-row>
         <v-row>
@@ -339,6 +382,7 @@
 
   const itemsPerPageArray = [5, 10, 20, 100];
   const search = ref('');
+  const unitSelect = ref('');
   const submittalFilter = ref({
     peerReviewNeeded: null,
     nrInformed: null,
@@ -371,11 +415,215 @@
     { text: '', value: 'save', sortable: false},
     { text: '', value: 'data-table-expand' }
   ];
+  const units = [
+    'AA',
+    'BB',
+    'CC',
+    'DD',
+    'EE',
+    'FF'
+  ];
+  const subdivisions = [
+    'AAA',
+    'BBB',
+    'CCC',
+  ];
   const owners = [
-    'Corbet Camber',
-    'Benedicto Durn',
-    'Floyd Salvage',
-    'Harrietta Hentzer'
+  {
+      name: 'Corbet Camber',
+      unit: 'AA',
+      subdivision: 'AAA'
+    },
+    {
+      name: 'Benedicto Durn',
+      unit: 'AA',
+      subdivision: 'AAA'
+    },
+    {
+      name: 'Floyd Salvage',
+      unit: 'AA',
+      subdivision: 'AAA'
+    },
+    {
+      name: 'Harrietta Hentzer',
+      unit: 'AA',
+      subdivision: 'AAA'
+    },
+    {
+      name: 'Mason Roobottom',
+      unit: 'AA',
+      subdivision: 'AAA'
+    },
+    {
+      name: 'Marchelle Haker',
+      unit: 'BB',
+      subdivision: 'AAA'
+    },
+    {
+      name: 'Stearn Cahalan',
+      unit: 'BB',
+      subdivision: 'AAA'
+    },
+    {
+      name: 'Hettie Gluyas',
+      unit: 'BB',
+      subdivision: 'AAA'
+    },
+    {
+      name: 'Walker Ost',
+      unit: 'BB',
+      subdivision: 'AAA'
+    },
+    {
+      name: 'Thornie Maly',
+      unit: 'BB',
+      subdivision: 'AAA'
+    },
+    {
+      name: 'Aileen Cartner',
+      unit: 'BB',
+      subdivision: 'AAA'
+    },
+    {
+      name: 'Valina Cleaver',
+      unit: 'CC',
+      subdivision: 'BBB'
+    },
+    {
+      name: 'Natal Tilmouth',
+      unit: 'CC',
+      subdivision: 'BBB'
+    },
+    {
+      name: 'Sebastiano Janes',
+      unit: 'CC',
+      subdivision: 'BBB'
+    },
+    {
+      name: 'Maurizio Wrates',
+      unit: 'CC',
+      subdivision: 'BBB'
+    },
+    {
+      name: 'Daloris Roskell',
+      unit: 'CC',
+      subdivision: 'BBB'
+    },
+    {
+      name: 'Robbyn Morrid',
+      unit: 'CC',
+      subdivision: 'BBB'
+    },
+    {
+      name: 'Teddy Punt',
+      unit: 'CC',
+      subdivision: 'BBB'
+    },
+    {
+      name: 'Nessy Streets',
+      unit: 'DD',
+      subdivision: 'BBB'
+    },
+    {
+      name: 'Michel Mewett',
+      unit: 'DD',
+      subdivision: 'BBB'
+    },
+    {
+      name: 'Joice Hrynczyk',
+      unit: 'DD',
+      subdivision: 'BBB'
+    },
+    {
+      name: 'Lavinia Thaxter',
+      unit: 'DD',
+      subdivision: 'BBB'
+    },
+    {
+      name: 'Doralynne Konerding',
+      unit: 'EE',
+      subdivision: 'CCC'
+    },
+    {
+      name: 'Concettina Syalvester',
+      unit: 'EE',
+      subdivision: 'CCC'
+    },
+    {
+      name: 'Tommie Dunmuir',
+      unit: 'EE',
+      subdivision: 'CCC'
+    },
+    {
+      name: 'Christoffer Kryska',
+      unit: 'EE',
+      subdivision: 'CCC'
+    },
+    {
+      name: 'Benedikt Gothliff',
+      unit: 'EE',
+      subdivision: 'CCC'
+    },
+    {
+      name: 'Germayne Wannop',
+      unit: 'FF',
+      subdivision: 'CCC'
+    },
+    {
+      name: 'Maura Burhill',
+      unit: 'FF',
+      subdivision: 'CCC'
+    },
+    {
+      name: 'Phillipe Huckle',
+      unit: 'FF',
+      subdivision: 'CCC'
+    },
+    {
+      name: 'Drusilla Hassin',
+      unit: 'FF',
+      subdivision: 'CCC'
+    },
+    {
+      name: 'Gustavo Liley',
+      unit: 'FF',
+      subdivision: 'CCC'
+    },
+    {
+      name: 'Jessie Arangy',
+      unit: 'FF',
+      subdivision: 'CCC'
+    },
+    {
+      name: 'Georgina Cadagan',
+      unit: 'FF',
+      subdivision: 'CCC'
+    },
+    {
+      name: 'Marthena Brierly',
+      unit: 'FF',
+      subdivision: 'CCC'
+    },
+    {
+      name: 'Kingsly Clymo',
+      unit: 'FF',
+      subdivision: 'CCC'
+    },
+    {
+      name: 'Melany Noddles',
+      unit: 'FF',
+      subdivision: 'CCC'
+    },
+    {
+      name: 'Sibel Peterffy',
+      unit: 'FF',
+      subdivision: 'CCC'
+    },
+    {
+      name: 'Waldo Locke',
+      unit: 'FF',
+      subdivision: 'CCC'
+    }
   ];
   
   const drag = false;
