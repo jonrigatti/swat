@@ -9,7 +9,7 @@
         </v-row>
         <v-row>
           <v-col>
-              <v-toolbar dark color="purple darken-3" class="mb-1" v-if="app.submittalView==='cards'">
+              <v-toolbar dark color="purple darken-3" class="mb-0" v-if="app.submittalView==='cards'">
                 <v-text-field
                   v-model="search"
                   clearable
@@ -41,10 +41,9 @@
                   </v-btn-toggle>
                 </template>
               </v-toolbar>
-              <v-card dark color="blue darken-3" class="d-inline-flex pa-0 mb-1" width="w-100">
-                <v-container>
-                  <v-row justify="start">
-                    <v-col>
+              <v-sheet color="purple darken-2" class="d-flex flex-wrap justify-start pa-2 mb-1" style="width: 100%;">
+
+                    <div class="pa-1">
                       <v-btn-toggle
                         v-model="projectFilter"
                         dense
@@ -75,126 +74,150 @@
                       >
                         None
                       </v-btn>
-                    </v-col>
-                    <v-col>
+                    </div>
+
+                    <div class="pa-1">
                       <v-container>
                         <v-row>
                           <v-btn-toggle
                             v-model="unitSelect"
+                            multiple
                             dense
                             background-color="primary"
-                            exclusive
                             dark
                           >
+                            <v-btn
+                              color="yellow darken-3"
+                              v-for="unit in units"
+                              :key="unit"
+                              :value="unit"
+                            >
+                              {{ unit }}
+                            </v-btn>
+                          </v-btn-toggle>
                           <v-btn
-                            color="yellow darken-3"
-                            v-for="unit in units"
-                            :key="unit"
-                            :value="unit"
+                            dense
+                            color="red darken-3"
+                            @click="() => submittalFilter.owner = filteredOwners.map(o => o.name)"
+                            v-show="unitSelect != ''"
                           >
-                            {{ unit }}
+                            All
                           </v-btn>
-                        </v-btn-toggle>
+                          <v-btn
+                            dense
+                            color="red darken-3"
+                            @click="() => submittalFilter.owner = []"
+                            v-show="unitSelect != ''"
+                          >
+                            None
+                          </v-btn>
                         </v-row>
-                        <v-row class="d-inline-flex">
+                        <v-row class="d-inline-flex flex-wrap">
                           <v-item-group
                             v-model="submittalFilter.owner"
                             dense
                             background-color="primary"
+                            multiple
                             dark
                           >
                             <v-item
-                              v-for="owner in owners.filter(owner => owner.unit === unitSelect)"
+                              v-for="owner in filteredOwners.sort(function(o1, o2) {return o1.name.substring(o1.name.indexOf(' ') + 1).localeCompare(o2.name.substring(o2.name.indexOf(' ') + 1))})"
                               :key="owner.name"
                               :value="owner.name"
                               v-slot="{ active, toggle }"
                             >
                               <v-btn
                                 color="green"
-                                class="ma-1 text-capitalize"
+                                class="pa-1 ma-1 text-capitalize"
                                 active-class="black--text"
                                 :input-value="active"
+                                small
                                 @click="toggle"
                               >
-                                {{ owner.name }}
+                                {{ owner.name.substring(owner.name.indexOf(' ') + 1) }}
                               </v-btn>
                             </v-item>
                           </v-item-group>
                         </v-row>
                       </v-container>
-                    </v-col>
-                    <v-col>
-                      <v-btn-toggle
-                        dense
-                        background-color="primary"
-                        exclusive
-                        v-model="submittalFilter.peerReviewNeeded"
-                      >                    
-                      <v-btn
+                    </div>
+
+                    <div class="d-flex">
+                      <div class="pa-1">
+                        <v-btn-toggle
                           dense
-                          color="red darken-3"
-                          :value="true"
-                        >
-                          Peer Needed
-                        </v-btn>
+                          background-color="primary"
+                          exclusive
+                          v-model="submittalFilter.peerReviewNeeded"
+                        >                    
                         <v-btn
+                            dense
+                            color="red darken-3"
+                            :value="true"
+                          >
+                            Peer Needed
+                          </v-btn>
+                          <v-btn
+                            dense
+                            color="red darken-3"
+                            :value="false"
+                          >
+                            Peer Assigned
+                          </v-btn>
+                        </v-btn-toggle>
+                      </div>
+
+                      <div class="pa-1">
+                        <v-btn-toggle
                           dense
-                          color="red darken-3"
-                          :value="false"
-                        >
-                          Peer Assigned
-                        </v-btn>
-                      </v-btn-toggle>
-                    </v-col>
-                    <v-col>
-                      <v-btn-toggle
-                        dense
-                        background-color="primary"
-                        exclusive
-                        v-model="submittalFilter.nrInformed"
-                      >                    
-                        <v-btn
+                          background-color="primary"
+                          exclusive
+                          v-model="submittalFilter.nrInformed"
+                        >                    
+                          <v-btn
+                            dense
+                            color="blue darken-3"
+                            :value="true"
+                          >
+                            NR Informed
+                          </v-btn>
+                          <v-btn
+                            dense
+                            color="blue darken-3"
+                            :value="false"
+                          >
+                            NR Uninformed
+                          </v-btn>
+                        </v-btn-toggle>
+                      </div>
+
+                      <div class="pa-1">
+                        <v-btn-toggle
                           dense
-                          color="blue darken-3"
-                          :value="true"
-                        >
-                          NR Informed
-                        </v-btn>
-                        <v-btn
-                          dense
-                          color="blue darken-3"
-                          :value="false"
-                        >
-                          NR Uninformed
-                        </v-btn>
-                      </v-btn-toggle>
-                    </v-col>
-                    <v-col>
-                      <v-btn-toggle
-                        dense
-                        background-color="primary"
-                        exclusive
-                        v-model="submittalFilter.open"
-                      >                    
-                        <v-btn
-                          dense
-                          color="orange darken-3"
-                          :value="true"
-                        >
-                          Open
-                        </v-btn>
-                        <v-btn
-                          dense
-                          color="orange darken-3"
-                          :value="false"
-                        >
-                          Closed
-                        </v-btn>
-                      </v-btn-toggle>
-                    </v-col>
-                  </v-row>
-              </v-container>
-              </v-card>
+                          background-color="primary"
+                          exclusive
+                          v-model="submittalFilter.open"
+                        >                    
+                          <v-btn
+                            dense
+                            color="orange darken-3"
+                            :value="true"
+                          >
+                            Open
+                          </v-btn>
+                          <v-btn
+                            dense
+                            color="orange darken-3"
+                            :value="false"
+                          >
+                            Closed
+                          </v-btn>
+                        </v-btn-toggle>
+                      </div>
+                    </div>
+
+                    <!-- {{ submittals.submittals.map(function(s) { u = Math.floor(Math.random()*units.length); n = {name: s.owner, unit: units[u], subdivision: subdivisions[Math.round(u/2)]}; return n;}) }} -->
+              </v-sheet>
           </v-col>
         </v-row>
         <v-row>
@@ -361,7 +384,6 @@
   import Datepicker from './Datepicker.vue';
   import PriorityMenu from './PriorityMenu.vue';
   import SubmittalSearch from './SubmittalSearch.vue';
-  import draggable from 'vuedraggable';
   import { useSubmittalsStore } from '../stores/SubmittalsStore';
   import { useProjectsStore } from '../stores/ProjectsStore';
   import { useAppStore } from '../stores/AppStore';
@@ -382,11 +404,11 @@
 
   const itemsPerPageArray = [5, 10, 20, 100];
   const search = ref('');
-  const unitSelect = ref('');
+  const unitSelect = ref([]);  
   const submittalFilter = ref({
     peerReviewNeeded: null,
     nrInformed: null,
-    owner: null,
+    owner: [],
     open: null
   });
   const projectFilter = ref(['A', 'B', 'C', 'D']);
@@ -428,205 +450,204 @@
     'BBB',
     'CCC',
   ];
-  const owners = [
-  {
-      name: 'Corbet Camber',
-      unit: 'AA',
-      subdivision: 'AAA'
-    },
-    {
-      name: 'Benedicto Durn',
-      unit: 'AA',
-      subdivision: 'AAA'
-    },
-    {
-      name: 'Floyd Salvage',
-      unit: 'AA',
-      subdivision: 'AAA'
-    },
-    {
-      name: 'Harrietta Hentzer',
-      unit: 'AA',
-      subdivision: 'AAA'
-    },
-    {
-      name: 'Mason Roobottom',
-      unit: 'AA',
-      subdivision: 'AAA'
-    },
-    {
-      name: 'Marchelle Haker',
-      unit: 'BB',
-      subdivision: 'AAA'
-    },
-    {
-      name: 'Stearn Cahalan',
-      unit: 'BB',
-      subdivision: 'AAA'
-    },
-    {
-      name: 'Hettie Gluyas',
-      unit: 'BB',
-      subdivision: 'AAA'
-    },
-    {
-      name: 'Walker Ost',
-      unit: 'BB',
-      subdivision: 'AAA'
-    },
-    {
-      name: 'Thornie Maly',
-      unit: 'BB',
-      subdivision: 'AAA'
-    },
-    {
-      name: 'Aileen Cartner',
-      unit: 'BB',
-      subdivision: 'AAA'
-    },
-    {
-      name: 'Valina Cleaver',
-      unit: 'CC',
-      subdivision: 'BBB'
-    },
-    {
-      name: 'Natal Tilmouth',
-      unit: 'CC',
-      subdivision: 'BBB'
-    },
-    {
-      name: 'Sebastiano Janes',
-      unit: 'CC',
-      subdivision: 'BBB'
-    },
-    {
-      name: 'Maurizio Wrates',
-      unit: 'CC',
-      subdivision: 'BBB'
-    },
-    {
-      name: 'Daloris Roskell',
-      unit: 'CC',
-      subdivision: 'BBB'
-    },
-    {
-      name: 'Robbyn Morrid',
-      unit: 'CC',
-      subdivision: 'BBB'
-    },
-    {
-      name: 'Teddy Punt',
-      unit: 'CC',
-      subdivision: 'BBB'
-    },
-    {
-      name: 'Nessy Streets',
-      unit: 'DD',
-      subdivision: 'BBB'
-    },
-    {
-      name: 'Michel Mewett',
-      unit: 'DD',
-      subdivision: 'BBB'
-    },
-    {
-      name: 'Joice Hrynczyk',
-      unit: 'DD',
-      subdivision: 'BBB'
-    },
-    {
-      name: 'Lavinia Thaxter',
-      unit: 'DD',
-      subdivision: 'BBB'
-    },
-    {
-      name: 'Doralynne Konerding',
-      unit: 'EE',
-      subdivision: 'CCC'
-    },
-    {
-      name: 'Concettina Syalvester',
-      unit: 'EE',
-      subdivision: 'CCC'
-    },
-    {
-      name: 'Tommie Dunmuir',
-      unit: 'EE',
-      subdivision: 'CCC'
-    },
-    {
-      name: 'Christoffer Kryska',
-      unit: 'EE',
-      subdivision: 'CCC'
-    },
-    {
-      name: 'Benedikt Gothliff',
-      unit: 'EE',
-      subdivision: 'CCC'
-    },
-    {
-      name: 'Germayne Wannop',
-      unit: 'FF',
-      subdivision: 'CCC'
-    },
-    {
-      name: 'Maura Burhill',
-      unit: 'FF',
-      subdivision: 'CCC'
-    },
-    {
-      name: 'Phillipe Huckle',
-      unit: 'FF',
-      subdivision: 'CCC'
-    },
-    {
-      name: 'Drusilla Hassin',
-      unit: 'FF',
-      subdivision: 'CCC'
-    },
-    {
-      name: 'Gustavo Liley',
-      unit: 'FF',
-      subdivision: 'CCC'
-    },
-    {
-      name: 'Jessie Arangy',
-      unit: 'FF',
-      subdivision: 'CCC'
-    },
-    {
-      name: 'Georgina Cadagan',
-      unit: 'FF',
-      subdivision: 'CCC'
-    },
-    {
-      name: 'Marthena Brierly',
-      unit: 'FF',
-      subdivision: 'CCC'
-    },
-    {
-      name: 'Kingsly Clymo',
-      unit: 'FF',
-      subdivision: 'CCC'
-    },
-    {
-      name: 'Melany Noddles',
-      unit: 'FF',
-      subdivision: 'CCC'
-    },
-    {
-      name: 'Sibel Peterffy',
-      unit: 'FF',
-      subdivision: 'CCC'
-    },
-    {
-      name: 'Waldo Locke',
-      unit: 'FF',
-      subdivision: 'CCC'
-    }
-  ];
-  
-  const drag = false;
+  // const owners = [
+  // {
+  //     name: 'Corbet Camber',
+  //     unit: 'AA',
+  //     subdivision: 'AAA'
+  //   },
+  //   {
+  //     name: 'Benedicto Durn',
+  //     unit: 'AA',
+  //     subdivision: 'AAA'
+  //   },
+  //   {
+  //     name: 'Floyd Salvage',
+  //     unit: 'AA',
+  //     subdivision: 'AAA'
+  //   },
+  //   {
+  //     name: 'Harrietta Hentzer',
+  //     unit: 'AA',
+  //     subdivision: 'AAA'
+  //   },
+  //   {
+  //     name: 'Mason Roobottom',
+  //     unit: 'AA',
+  //     subdivision: 'AAA'
+  //   },
+  //   {
+  //     name: 'Marchelle Haker',
+  //     unit: 'BB',
+  //     subdivision: 'AAA'
+  //   },
+  //   {
+  //     name: 'Stearn Cahalan',
+  //     unit: 'BB',
+  //     subdivision: 'AAA'
+  //   },
+  //   {
+  //     name: 'Hettie Gluyas',
+  //     unit: 'BB',
+  //     subdivision: 'AAA'
+  //   },
+  //   {
+  //     name: 'Walker Ost',
+  //     unit: 'BB',
+  //     subdivision: 'AAA'
+  //   },
+  //   {
+  //     name: 'Thornie Maly',
+  //     unit: 'BB',
+  //     subdivision: 'AAA'
+  //   },
+  //   {
+  //     name: 'Aileen Cartner',
+  //     unit: 'BB',
+  //     subdivision: 'AAA'
+  //   },
+  //   {
+  //     name: 'Valina Cleaver',
+  //     unit: 'CC',
+  //     subdivision: 'BBB'
+  //   },
+  //   {
+  //     name: 'Natal Tilmouth',
+  //     unit: 'CC',
+  //     subdivision: 'BBB'
+  //   },
+  //   {
+  //     name: 'Sebastiano Janes',
+  //     unit: 'CC',
+  //     subdivision: 'BBB'
+  //   },
+  //   {
+  //     name: 'Maurizio Wrates',
+  //     unit: 'CC',
+  //     subdivision: 'BBB'
+  //   },
+  //   {
+  //     name: 'Daloris Roskell',
+  //     unit: 'CC',
+  //     subdivision: 'BBB'
+  //   },
+  //   {
+  //     name: 'Robbyn Morrid',
+  //     unit: 'CC',
+  //     subdivision: 'BBB'
+  //   },
+  //   {
+  //     name: 'Teddy Punt',
+  //     unit: 'CC',
+  //     subdivision: 'BBB'
+  //   },
+  //   {
+  //     name: 'Nessy Streets',
+  //     unit: 'DD',
+  //     subdivision: 'BBB'
+  //   },
+  //   {
+  //     name: 'Michel Mewett',
+  //     unit: 'DD',
+  //     subdivision: 'BBB'
+  //   },
+  //   {
+  //     name: 'Joice Hrynczyk',
+  //     unit: 'DD',
+  //     subdivision: 'BBB'
+  //   },
+  //   {
+  //     name: 'Lavinia Thaxter',
+  //     unit: 'DD',
+  //     subdivision: 'BBB'
+  //   },
+  //   {
+  //     name: 'Doralynne Konerding',
+  //     unit: 'EE',
+  //     subdivision: 'CCC'
+  //   },
+  //   {
+  //     name: 'Concettina Syalvester',
+  //     unit: 'EE',
+  //     subdivision: 'CCC'
+  //   },
+  //   {
+  //     name: 'Tommie Dunmuir',
+  //     unit: 'EE',
+  //     subdivision: 'CCC'
+  //   },
+  //   {
+  //     name: 'Christoffer Kryska',
+  //     unit: 'EE',
+  //     subdivision: 'CCC'
+  //   },
+  //   {
+  //     name: 'Benedikt Gothliff',
+  //     unit: 'EE',
+  //     subdivision: 'CCC'
+  //   },
+  //   {
+  //     name: 'Germayne Wannop',
+  //     unit: 'FF',
+  //     subdivision: 'CCC'
+  //   },
+  //   {
+  //     name: 'Maura Burhill',
+  //     unit: 'FF',
+  //     subdivision: 'CCC'
+  //   },
+  //   {
+  //     name: 'Phillipe Huckle',
+  //     unit: 'FF',
+  //     subdivision: 'CCC'
+  //   },
+  //   {
+  //     name: 'Drusilla Hassin',
+  //     unit: 'FF',
+  //     subdivision: 'CCC'
+  //   },
+  //   {
+  //     name: 'Gustavo Liley',
+  //     unit: 'FF',
+  //     subdivision: 'CCC'
+  //   },
+  //   {
+  //     name: 'Jessie Arangy',
+  //     unit: 'FF',
+  //     subdivision: 'CCC'
+  //   },
+  //   {
+  //     name: 'Georgina Cadagan',
+  //     unit: 'FF',
+  //     subdivision: 'CCC'
+  //   },
+  //   {
+  //     name: 'Marthena Brierly',
+  //     unit: 'FF',
+  //     subdivision: 'CCC'
+  //   },
+  //   {
+  //     name: 'Kingsly Clymo',
+  //     unit: 'FF',
+  //     subdivision: 'CCC'
+  //   },
+  //   {
+  //     name: 'Melany Noddles',
+  //     unit: 'FF',
+  //     subdivision: 'CCC'
+  //   },
+  //   {
+  //     name: 'Sibel Peterffy',
+  //     unit: 'FF',
+  //     subdivision: 'CCC'
+  //   },
+  //   {
+  //     name: 'Waldo Locke',
+  //     unit: 'FF',
+  //     subdivision: 'CCC'
+  //   }
+  // ];
+  const owners = [ { "name": "Shirley Clemas", "unit": "BB", "subdivision": "BBB" }, { "name": "Aubrey Meenehan", "unit": "FF" }, { "name": "Nikolia Dulson", "unit": "AA", "subdivision": "AAA" }, { "name": "Claretta Enns", "unit": "DD", "subdivision": "CCC" }, { "name": "Ninnetta Kamiyama", "unit": "AA", "subdivision": "AAA" }, { "name": "Brenna Pettet", "unit": "DD", "subdivision": "CCC" }, { "name": "Clementina Burnham", "unit": "BB", "subdivision": "BBB" }, { "name": "Shara Willeson", "unit": "DD", "subdivision": "CCC" }, { "name": "Salome Bernardo", "unit": "DD", "subdivision": "CCC" }, { "name": "Conrade Dines", "unit": "DD", "subdivision": "CCC" }, { "name": "Marillin Foister", "unit": "EE", "subdivision": "CCC" }, { "name": "Maggee Silvester", "unit": "FF" }, { "name": "Chery Barhims", "unit": "DD", "subdivision": "CCC" }, { "name": "Spence Grishinov", "unit": "CC", "subdivision": "BBB" }, { "name": "Dulciana Saberton", "unit": "AA", "subdivision": "AAA" }, { "name": "Valina Cleaver", "unit": "FF" }, { "name": "Kenna Hadgkiss", "unit": "AA", "subdivision": "AAA" }, { "name": "Shay Rennie", "unit": "FF" }, { "name": "Colin Van der Beek", "unit": "EE", "subdivision": "CCC" }, { "name": "Westbrook Rumens", "unit": "CC", "subdivision": "BBB" }, { "name": "Renee Schwanden", "unit": "FF" }, { "name": "Euphemia Ciraldo", "unit": "EE", "subdivision": "CCC" }, { "name": "Michel Mewett", "unit": "FF" }, { "name": "Aymer Aland", "unit": "FF" }, { "name": "Dennison Corbould", "unit": "EE", "subdivision": "CCC" }, { "name": "Christoffer Kryska", "unit": "BB", "subdivision": "BBB" }, { "name": "Odo Dykins", "unit": "CC", "subdivision": "BBB" }, { "name": "Maurizio Wrates", "unit": "DD", "subdivision": "CCC" }, { "name": "Leia Swinburn", "unit": "BB", "subdivision": "BBB" }, { "name": "Noam Ewbanck", "unit": "DD", "subdivision": "CCC" }, { "name": "Carmine Stuther", "unit": "CC", "subdivision": "BBB" }, { "name": "Caesar Jeppensen", "unit": "CC", "subdivision": "BBB" }, { "name": "Phillipe Huckle", "unit": "CC", "subdivision": "BBB" }, { "name": "Edi Rentelll", "unit": "CC", "subdivision": "BBB" }, { "name": "Audi Moughtin", "unit": "EE", "subdivision": "CCC" }, { "name": "Gwenora Peascod", "unit": "AA", "subdivision": "AAA" }, { "name": "Rockey Colam", "unit": "EE", "subdivision": "CCC" }, { "name": "Margie Truggian", "unit": "AA", "subdivision": "AAA" }, { "name": "Frederica Siney", "unit": "FF" }, { "name": "Cary Lindwasser", "unit": "DD", "subdivision": "CCC" }, { "name": "Robinet Pettiward", "unit": "DD", "subdivision": "CCC" }, { "name": "Durand Godspede", "unit": "AA", "subdivision": "AAA" }, { "name": "Tommie Dunmuir", "unit": "DD", "subdivision": "CCC" }, { "name": "Raimundo Rylatt", "unit": "EE", "subdivision": "CCC" }, { "name": "Verney McKechnie", "unit": "AA", "subdivision": "AAA" }, { "name": "Ray Binding", "unit": "BB", "subdivision": "BBB" }, { "name": "Valery Vedishchev", "unit": "FF" }, { "name": "Trevar Faber", "unit": "AA", "subdivision": "AAA" }, { "name": "Allyce O'Giany", "unit": "DD", "subdivision": "CCC" }, { "name": "Armstrong Androlli", "unit": "FF" }, { "name": "Kingsly Clymo", "unit": "EE", "subdivision": "CCC" }, { "name": "Chris Simister", "unit": "CC", "subdivision": "BBB" }, { "name": "Sloan Breagan", "unit": "FF" }, { "name": "Valentina Alston", "unit": "CC", "subdivision": "BBB" }, { "name": "Shae Hadfield", "unit": "FF" }, { "name": "Gardie Latta", "unit": "CC", "subdivision": "BBB" }, { "name": "Kermit Odney", "unit": "BB", "subdivision": "BBB" }, { "name": "Vina Cowpertwait", "unit": "BB", "subdivision": "BBB" }, { "name": "Tirrell Nanninini", "unit": "BB", "subdivision": "BBB" }, { "name": "Taylor Bench", "unit": "FF" }, { "name": "Cornela Philson", "unit": "AA", "subdivision": "AAA" }, { "name": "Rutger Vesque", "unit": "CC", "subdivision": "BBB" }, { "name": "Deane Mityakov", "unit": "CC", "subdivision": "BBB" }, { "name": "Alexander Bradwell", "unit": "EE", "subdivision": "CCC" }, { "name": "Padget Alsobrook", "unit": "EE", "subdivision": "CCC" }, { "name": "Gaynor Steart", "unit": "EE", "subdivision": "CCC" }, { "name": "Findley Laba", "unit": "CC", "subdivision": "BBB" }, { "name": "Benedikt Gothliff", "unit": "CC", "subdivision": "BBB" }, { "name": "Fernandina Alcoran", "unit": "CC", "subdivision": "BBB" }, { "name": "Stearn Cahalan", "unit": "DD", "subdivision": "CCC" }, { "name": "Felicio Rubinfeld", "unit": "BB", "subdivision": "BBB" }, { "name": "Remus Alderson", "unit": "FF" }, { "name": "Carrol Kohen", "unit": "CC", "subdivision": "BBB" }, { "name": "Jud McParland", "unit": "DD", "subdivision": "CCC" }, { "name": "Moore Casetta", "unit": "DD", "subdivision": "CCC" }, { "name": "Aileen Cartner", "unit": "EE", "subdivision": "CCC" }, { "name": "Lisbeth Melledy", "unit": "CC", "subdivision": "BBB" }, { "name": "Andra Kubiak", "unit": "EE", "subdivision": "CCC" }, { "name": "Tony Aggs", "unit": "CC", "subdivision": "BBB" }, { "name": "Erma Pennycock", "unit": "CC", "subdivision": "BBB" }, { "name": "Ailis Sutterby", "unit": "CC", "subdivision": "BBB" }, { "name": "Krissy Hayhoe", "unit": "DD", "subdivision": "CCC" }, { "name": "Cecil Jarmain", "unit": "BB", "subdivision": "BBB" }, { "name": "Datha Gooda", "unit": "BB", "subdivision": "BBB" }, { "name": "Donna Dukes", "unit": "CC", "subdivision": "BBB" }, { "name": "Cyril Gulc", "unit": "CC", "subdivision": "BBB" }, { "name": "Joice Hrynczyk", "unit": "BB", "subdivision": "BBB" }, { "name": "Jessie Vogl", "unit": "FF" }, { "name": "Bary Lethbrig", "unit": "AA", "subdivision": "AAA" }, { "name": "Nelle Groucock", "unit": "BB", "subdivision": "BBB" }, { "name": "Winne Cowthard", "unit": "CC", "subdivision": "BBB" }, { "name": "Woodie Beckmann", "unit": "AA", "subdivision": "AAA" }, { "name": "Ker Bugg", "unit": "CC", "subdivision": "BBB" }, { "name": "Newton Biddlestone", "unit": "DD", "subdivision": "CCC" }, { "name": "Emily Bernadot", "unit": "DD", "subdivision": "CCC" }, { "name": "Walt Girault", "unit": "FF" }, { "name": "Karole Vlasenkov", "unit": "AA", "subdivision": "AAA" }, { "name": "Matt Postans", "unit": "DD", "subdivision": "CCC" }, { "name": "Chickie Gisbey", "unit": "BB", "subdivision": "BBB" }, { "name": "Mason Roobottom", "unit": "DD", "subdivision": "CCC" }, { "name": "Bradan Karle", "unit": "FF" }, { "name": "Paulette Suter", "unit": "AA", "subdivision": "AAA" }, { "name": "Riobard Roj", "unit": "DD", "subdivision": "CCC" }, { "name": "Fae Farlowe", "unit": "BB", "subdivision": "BBB" }, { "name": "Geoffrey Kemmett", "unit": "EE", "subdivision": "CCC" }, { "name": "Cristine Littlepage", "unit": "AA", "subdivision": "AAA" }, { "name": "Hollyanne Takkos", "unit": "DD", "subdivision": "CCC" }, { "name": "Glenden Hulcoop", "unit": "BB", "subdivision": "BBB" }, { "name": "Kenon Vasyushkhin", "unit": "FF" }, { "name": "Konstance Georgiades", "unit": "DD", "subdivision": "CCC" }, { "name": "Karly Humbles", "unit": "EE", "subdivision": "CCC" }, { "name": "Joane Marfield", "unit": "BB", "subdivision": "BBB" }, { "name": "Fannie Hens", "unit": "BB", "subdivision": "BBB" }, { "name": "Fred Padwick", "unit": "EE", "subdivision": "CCC" }, { "name": "Riki Laughtisse", "unit": "FF" }, { "name": "Crissy Craw", "unit": "FF" }, { "name": "Nessy Streets", "unit": "FF" }, { "name": "Bartel Catterill", "unit": "AA", "subdivision": "AAA" }, { "name": "Aldin Pentony", "unit": "EE", "subdivision": "CCC" }, { "name": "Amandy Lorentzen", "unit": "DD", "subdivision": "CCC" }, { "name": "Trisha Antoinet", "unit": "DD", "subdivision": "CCC" }, { "name": "Gustavo Liley", "unit": "DD", "subdivision": "CCC" }, { "name": "Thornie Maly", "unit": "DD", "subdivision": "CCC" }, { "name": "Eleni Gutowski", "unit": "FF" }, { "name": "Marcelle Hyam", "unit": "EE", "subdivision": "CCC" }, { "name": "Lynna MacNockater", "unit": "CC", "subdivision": "BBB" }, { "name": "Othilie Vergo", "unit": "CC", "subdivision": "BBB" }, { "name": "Javier Sikorski", "unit": "FF" }, { "name": "Corbet Camber", "unit": "FF" }, { "name": "Marylee Sneath", "unit": "DD", "subdivision": "CCC" }, { "name": "Walker Ost", "unit": "EE", "subdivision": "CCC" }, { "name": "Aleen Gorman", "unit": "BB", "subdivision": "BBB" }, { "name": "Pembroke Kleinzweig", "unit": "FF" }, { "name": "Lavinia Thaxter", "unit": "DD", "subdivision": "CCC" }, { "name": "Bette-ann Pepys", "unit": "DD", "subdivision": "CCC" }, { "name": "Sharai MacVean", "unit": "AA", "subdivision": "AAA" }, { "name": "Natal Tilmouth", "unit": "DD", "subdivision": "CCC" }, { "name": "Harrietta Hentzer", "unit": "FF" }, { "name": "Derward Blackaller", "unit": "AA", "subdivision": "AAA" }, { "name": "Caspar Driuzzi", "unit": "CC", "subdivision": "BBB" }, { "name": "Angeline Nannizzi", "unit": "CC", "subdivision": "BBB" }, { "name": "Mauricio Blackley", "unit": "FF" }, { "name": "Jessi Tramel", "unit": "EE", "subdivision": "CCC" }, { "name": "Gilligan Butterley", "unit": "BB", "subdivision": "BBB" }, { "name": "Earvin Ellingford", "unit": "BB", "subdivision": "BBB" }, { "name": "Jeanine Moyce", "unit": "DD", "subdivision": "CCC" }, { "name": "Jessie Arangy", "unit": "EE", "subdivision": "CCC" }, { "name": "Morley Goady", "unit": "AA", "subdivision": "AAA" }, { "name": "Michal Hucks", "unit": "BB", "subdivision": "BBB" }, { "name": "Augusto Husthwaite", "unit": "AA", "subdivision": "AAA" }, { "name": "Teddy Punt", "unit": "BB", "subdivision": "BBB" }, { "name": "Brenden Stockney", "unit": "BB", "subdivision": "BBB" }, { "name": "Agathe Smitheram", "unit": "FF" }, { "name": "Robbyn Morrid", "unit": "CC", "subdivision": "BBB" }, { "name": "Sheeree Berresford", "unit": "CC", "subdivision": "BBB" }, { "name": "Mimi Wallentin", "unit": "FF" }, { "name": "Doralynne Konerding", "unit": "BB", "subdivision": "BBB" }, { "name": "Kipper Kegan", "unit": "FF" }, { "name": "Drusilla Hassin", "unit": "DD", "subdivision": "CCC" }, { "name": "Lindon Hearne", "unit": "DD", "subdivision": "CCC" }, { "name": "Cory Hanna", "unit": "EE", "subdivision": "CCC" }, { "name": "Nessy Streets", "unit": "DD", "subdivision": "CCC" }, { "name": "Stefano O' Cuolahan", "unit": "DD", "subdivision": "CCC" }, { "name": "Sebastiano Janes", "unit": "FF" }, { "name": "Johanna Lilloe", "unit": "BB", "subdivision": "BBB" }, { "name": "Walsh Binestead", "unit": "CC", "subdivision": "BBB" }, { "name": "Marcel Beatson", "unit": "AA", "subdivision": "AAA" }, { "name": "Eduardo Olenchikov", "unit": "DD", "subdivision": "CCC" }, { "name": "Tremain Polak", "unit": "EE", "subdivision": "CCC" }, { "name": "Barb Sheach", "unit": "BB", "subdivision": "BBB" }, { "name": "Constantina Oganesian", "unit": "BB", "subdivision": "BBB" }, { "name": "Wynn Gorgen", "unit": "EE", "subdivision": "CCC" }, { "name": "Ulysses Harmar", "unit": "BB", "subdivision": "BBB" }, { "name": "Tiffy Pitkeathley", "unit": "FF" }, { "name": "Mathilda Mc Cahey", "unit": "BB", "subdivision": "BBB" }, { "name": "Benedicto Durn", "unit": "AA", "subdivision": "AAA" }, { "name": "Minna Bartczak", "unit": "FF" }, { "name": "Evangeline Stoak", "unit": "AA", "subdivision": "AAA" }, { "name": "Germayne Wannop", "unit": "EE", "subdivision": "CCC" }, { "name": "Monty Ivie", "unit": "DD", "subdivision": "CCC" }, { "name": "Myrtie Swait", "unit": "CC", "subdivision": "BBB" }, { "name": "Susanne Hargreaves", "unit": "CC", "subdivision": "BBB" }, { "name": "Maura Burhill", "unit": "FF" }, { "name": "Lora Woodford", "unit": "EE", "subdivision": "CCC" }, { "name": "Floyd Salvage", "unit": "DD", "subdivision": "CCC" }, { "name": "Claudian Martinot", "unit": "BB", "subdivision": "BBB" }, { "name": "Dedie Blumer", "unit": "AA", "subdivision": "AAA" }, { "name": "Daloris Roskell", "unit": "FF" }, { "name": "Nerty Harmant", "unit": "AA", "subdivision": "AAA" }, { "name": "Celinda Lowensohn", "unit": "FF" }, { "name": "Glenn Bearns", "unit": "EE", "subdivision": "CCC" }, { "name": "Gwenora Candey", "unit": "CC", "subdivision": "BBB" }, { "name": "Waldo Locke", "unit": "DD", "subdivision": "CCC" }, { "name": "Kendell Drable", "unit": "FF" }, { "name": "Marchelle Clewer", "unit": "CC", "subdivision": "BBB" }, { "name": "Richmound Vinick", "unit": "DD", "subdivision": "CCC" }, { "name": "Corbin Milne", "unit": "AA", "subdivision": "AAA" }, { "name": "Georgina Cadagan", "unit": "DD", "subdivision": "CCC" }, { "name": "Tripp Kingdom", "unit": "AA", "subdivision": "AAA" }, { "name": "Ramon D'Souza", "unit": "FF" }, { "name": "Hettie Gluyas", "unit": "AA", "subdivision": "AAA" }, { "name": "Valentina Sandle", "unit": "EE", "subdivision": "CCC" }, { "name": "Marchelle Haker", "unit": "CC", "subdivision": "BBB" }, { "name": "Harlene Lynnett", "unit": "FF" }, { "name": "Joaquin Plumtree", "unit": "BB", "subdivision": "BBB" }, { "name": "Carilyn Yate", "unit": "EE", "subdivision": "CCC" }, { "name": "Alberta Beswetherick", "unit": "EE", "subdivision": "CCC" }, { "name": "Lawry Eyckelbeck", "unit": "BB", "subdivision": "BBB" }, { "name": "Kathie Latliff", "unit": "FF" }, { "name": "Batholomew Huyge", "unit": "CC", "subdivision": "BBB" }, { "name": "Lucias Graeser", "unit": "AA", "subdivision": "AAA" }, { "name": "Herman Levay", "unit": "FF" }, { "name": "Sibel Peterffy", "unit": "AA", "subdivision": "AAA" }, { "name": "Urban Lars", "unit": "FF" }, { "name": "Annmaria Ferenczy", "unit": "DD", "subdivision": "CCC" }, { "name": "Grethel Sage", "unit": "FF" }, { "name": "Emerson Elsdon", "unit": "BB", "subdivision": "BBB" }, { "name": "Melany Noddles", "unit": "AA", "subdivision": "AAA" }, { "name": "Angelique Bethell", "unit": "FF" }, { "name": "Tani Yoskowitz", "unit": "BB", "subdivision": "BBB" }, { "name": "Clive Sartain", "unit": "AA", "subdivision": "AAA" }, { "name": "Cristin Yurkin", "unit": "FF" }, { "name": "Maurie Birkmyre", "unit": "AA", "subdivision": "AAA" }, { "name": "Martie Marrows", "unit": "EE", "subdivision": "CCC" }, { "name": "Josephine Riddell", "unit": "DD", "subdivision": "CCC" }, { "name": "Catherin Brockton", "unit": "EE", "subdivision": "CCC" }, { "name": "Marthena Brierley", "unit": "EE", "subdivision": "CCC" }, { "name": "Lorianne MacDermand", "unit": "BB", "subdivision": "BBB" }, { "name": "Aloin Tisor", "unit": "BB", "subdivision": "BBB" }, { "name": "Kennett Ducker", "unit": "CC", "subdivision": "BBB" }, { "name": "Zach Baiss", "unit": "FF" }, { "name": "Ronica Sivess", "unit": "AA", "subdivision": "AAA" }, { "name": "Concettina Syalvester", "unit": "AA", "subdivision": "AAA" }, { "name": "Iorgos Jovanovic", "unit": "BB", "subdivision": "BBB" }, { "name": "Susana Dowsey", "unit": "BB", "subdivision": "BBB" }, { "name": "Jeromy Yakunikov", "unit": "FF" }, { "name": "Vonny Callendar", "unit": "BB", "subdivision": "BBB" }, { "name": "Bill Huggons", "unit": "BB", "subdivision": "BBB" }, { "name": "Dacie Klimowicz", "unit": "CC", "subdivision": "BBB" }, { "name": "Joline Butt", "unit": "FF" } ]
 
   // Methods
   const saveSubmittal = (submittal) => {
@@ -678,11 +699,29 @@
 
     Object.entries(submittalFilter.value).forEach(entry => {
       const [key, value] = entry;
-      value != null && (fS = fS.filter(submittal => submittal[key]===value));
-    });
+      if (value != null) {
+          if (Array.isArray(value))
+          {
+            fS = filter(fS, {
+              keywords: `${value}`,
+              predicate: 'OR'
+            })
+          } else {
+            fS = fS.filter(submittal => submittal[key]===value);
+          }
+      }
+    }
+    );
 
     return fS;
-  });  
+  });
+
+  const filteredOwners = computed(() => {
+        return filter(owners, {
+          keywords: `unit:${unitSelect.value}`,
+          predicate: 'OR'
+        })
+      });
 </script>
 
 <style scoped>
