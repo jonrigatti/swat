@@ -28,13 +28,32 @@
       <v-icon>mdi-magnify-close</v-icon>
     </v-btn>
 
-    <v-btn icon @click="app.submittalView = 'table'" v-show="app.submittalView=='cards'">
-      <v-icon>mdi-table</v-icon>
-    </v-btn>
-    
-    <v-btn icon @click="app.submittalView = 'cards'" v-show="app.submittalView=='table'">
-      <v-icon>mdi-cards</v-icon>
-    </v-btn>
+    <v-btn-toggle
+      v-model="app.submittalView"
+      background-color="transparent"
+      borderless
+      rounded
+      color="pink darken-6"
+    >
+      <v-btn
+          icon
+          value="cards"
+        >
+          <v-icon>mdi-cards</v-icon>
+        </v-btn>
+        <v-btn
+          icon
+          value="table"
+        >
+          <v-icon>mdi-table</v-icon>
+        </v-btn>
+        <v-btn
+          icon
+          value="calendar"
+        >
+          <v-icon>mdi-calendar</v-icon>
+      </v-btn>
+    </v-btn-toggle>
 
     <v-btn icon>
       <v-icon>mdi-dots-vertical</v-icon>

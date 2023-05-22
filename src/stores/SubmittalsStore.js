@@ -35,7 +35,7 @@ export const useSubmittalsStore = defineStore('SubmittalsStore', {
             SubmittalDataService.getOpen()
             .then(response => {
                 this.submittals = response.data;
-                console.log(response.data);
+                // console.log(response.data);
             })
             .catch(e => {
             console.log(e);
@@ -45,7 +45,7 @@ export const useSubmittalsStore = defineStore('SubmittalsStore', {
             SubmittalDataService.getClosed()
             .then(response => {
                 this.submittals = response.data;
-                console.log(response.data);
+                // console.log(response.data);
             })
             .catch(e => {
                 console.log(e);
@@ -55,7 +55,7 @@ export const useSubmittalsStore = defineStore('SubmittalsStore', {
             SubmittalDataService.findByViolationCategory(cat)
             .then(response => {
                 this.submittals = response.data;
-                console.log(response.data);
+                // console.log(response.data);
             })
             .catch(e => {
                 console.log(e);
@@ -65,7 +65,7 @@ export const useSubmittalsStore = defineStore('SubmittalsStore', {
             SubmittalDataService.findByOwner(owner)
             .then(response => {
                 this.submittals = response.data;
-                console.log(response.data);
+                // console.log(response.data);
             })
             .catch(e => {
                 console.log(e);
@@ -91,14 +91,14 @@ export const useSubmittalsStore = defineStore('SubmittalsStore', {
                 }
                     console.log(error.config);
             });
-            console.log(submittal._id)
+            // console.log(submittal._id)
         },
         async getDynamicQuery(query)
         {
             SubmittalDataService.findDynamic(query)
             .then(response => {
                 this.submittals = response.data;
-                console.log(response.data);
+                // console.log(response.data);
             })
             .catch(e => {
                 console.log(e);

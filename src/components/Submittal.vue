@@ -10,21 +10,22 @@
             </v-card-title>
             <v-card-text>
                 <v-text-field v-model.lazy="submittal.description" label="Description"></v-text-field>
-                <v-text-field v-model.lazy="submittal.owner" label="Owner"></v-text-field>
-                <v-container>
+                <v-container class="pa-0 ma-0">
                     <v-row>
                         <v-col>
-                            <Datepicker :dateProp="submittal.needDate" labelProp="Need Date" iconProp="mdi-calendar-clock" @update-date="(date) => submittal.needDate = date" />
+                            <v-text-field v-model.lazy="submittal.owner" label="Owner"></v-text-field>
+                            <div>
+                                Priority
+                                <PriorityMenu :submittalProp="submittal" />
+                            </div>
                         </v-col>
                         <v-col>
+                            <Datepicker :dateProp="submittal.receivedDate" labelProp="Received Date" iconProp="mdi-calendar-today" @update-date="(date) => submittal.receivedDate = date" />
+                            <Datepicker :dateProp="submittal.needDate" labelProp="Need Date" iconProp="mdi-calendar-clock" @update-date="(date) => submittal.needDate = date" />
                             <Datepicker :dateProp="submittal.dispositionDate" labelProp="Disposition Date" iconProp="mdi-calendar-check" @update-date="(date) => submittal.dispositionDate = date" />
                         </v-col>
                     </v-row>
                 </v-container>
-                <div>
-                    Priority:
-                    <PriorityMenu :submittalProp="submittal" />
-                </div>
             </v-card-text>
             <v-card class="py-1" v-if="expanded">
                 <v-card-title class="pa-2">Stakeholders</v-card-title>
@@ -70,12 +71,10 @@
 </template>
 
 <script setup>
-    import Stakeholder from './Stakeholder.vue';
     import Stakeholders from './Stakeholders.vue';
     import Violations from './Violations.vue';
     import Datepicker from './Datepicker.vue';
     import PriorityMenu from './PriorityMenu.vue';
-    import draggable from 'vuedraggable';
     import { useSubmittalsStore } from '../stores/SubmittalsStore';
     import { useProjectsStore } from '../stores/ProjectsStore';
     import ServerDataService from '../services/ServerDataService';
