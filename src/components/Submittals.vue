@@ -388,18 +388,21 @@
                   text
                   small
                   color="grey darken-2"
+                  @click="calendar.prev()"
                 >
-                  <v-icon small>
+                  <v-icon>
                     mdi-chevron-left
                   </v-icon>
                 </v-btn>
+                <h1>{{ dayjs(calendarDate).format('MMMM YYYY') }}</h1>
                 <v-btn
                   fab
                   text
                   small
                   color="grey darken-2"
+                  @click="calendar.next()"
                 >
-                  <v-icon small>
+                  <v-icon>
                     mdi-chevron-right
                   </v-icon>
                 </v-btn>
@@ -415,7 +418,7 @@
                       v-bind="attrs"
                       v-on="on"
                     >
-                      <span>{{ typeToLabel[type] }}</span>
+                      <span>mdi-menu-down</span>
                       <v-icon right>
                         mdi-menu-down
                       </v-icon>
@@ -438,12 +441,14 @@
                 </v-menu>
               </v-toolbar>
             </v-sheet>
-            <v-sheet height="600">
+            <v-sheet height="1000">
               <v-calendar
                 ref="calendar"
+                v-model="calendarDate"
                 color="primary"
-                :events="submittalEvents"
                 type="month"
+                :show-month-on-first="false"
+                :events="submittalEvents"
                 @click:event="showEvent"
               ></v-calendar>
               <v-menu
@@ -451,40 +456,11 @@
                 :close-on-content-click="false"
                 :activator="selectedElement"
                 offset-x
+                right
+                offset-overflow
+                max-width="600"
               >
-                <v-card
-                  color="grey lighten-4"
-                  min-width="350px"
-                  flat
-                >
-                  <v-toolbar
-                    dark
-                  >
-                    <v-btn icon>
-                      <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                    <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-                    <v-spacer></v-spacer>
-                    <v-btn icon>
-                      <v-icon>mdi-heart</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon>mdi-dots-vertical</v-icon>
-                    </v-btn>
-                  </v-toolbar>
-                  <v-card-text>
-                    <span v-html="selectedEvent.details"></span>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-btn
-                      text
-                      color="secondary"
-                      @click="selectedOpen = false"
-                    >
-                      Cancel
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
+                <Submittal :submittal="selectedEvent.submittal" />
               </v-menu>
             </v-sheet>
           </v-col>
@@ -521,6 +497,7 @@
 
   // Data
   const calendar = ref(null);
+  const calendarDate = ref(dayjs().format('YYYY-MM-DD').toString());
   const itemsPerPageArray = [5, 10, 20, 100];
   const search = ref('');
   const unitSelect = ref([]);  
@@ -590,18 +567,11 @@
         itemsPerPage.value = number
       };
 
-  const prev = () => {
-        calendar.value.prev();
-      };
-  const next = () => {
-        calendar.value.next();
-      };
-
   const showEvent = ({ nativeEvent, event }) => {
         const open = () => {
           selectedEvent.value = event
           selectedElement.value = nativeEvent.target
-          requestAnimationFrame(() => requestAnimationFrame(() => this.selectedOpen = true))
+          requestAnimationFrame(() => requestAnimationFrame(() => selectedOpen.value = true))
         }
 
         if (selectedOpen.value) {
@@ -679,6 +649,7 @@
       event.name = submittal.submittalID;
       event.start = dayjs(submittal.receivedDate).format('YYYY-MM-DD');
       event.end = dayjs(submittal.needDate).format('YYYY-MM-DD');
+      event.submittal = submittal;
 
       return event;
     });
