@@ -394,7 +394,7 @@
                     mdi-chevron-left
                   </v-icon>
                 </v-btn>
-                <h1>{{ dayjs(calendarDate).format('MMMM YYYY') }}</h1>
+                <h1 style="user-select: none;">{{ dayjs(calendarDate).format('MMMM YYYY') }}</h1>
                 <v-btn
                   fab
                   text
@@ -449,14 +449,15 @@
                 type="month"
                 :show-month-on-first="false"
                 :events="submittalEvents"
+                :event-more="false"
+                :event-color="eventColor"
                 @click:event="showEvent"
               ></v-calendar>
               <v-menu
                 v-model="selectedOpen"
                 :close-on-content-click="false"
                 :activator="selectedElement"
-                offset-x
-                right
+                offset-y
                 offset-overflow
                 max-width="600"
               >
@@ -584,6 +585,65 @@
         nativeEvent.stopPropagation()
       };
 
+  // const showMore = () => {    
+    // // if(eMore.value == 'flex') {
+    // //   eMore.value = 'table';
+    // // }
+    // // else {
+    // //   eMore.value = 'flex';
+    // // }
+
+    // eMore.value = !eMore.value
+    // // eventMoreArray.value = {
+    // //   weeklyDayOverflowY: 'auto',
+    // //   weeklyDisplay: 'grid',
+    // //   weeklyTableLayout: 'fixed',
+    // //   weeklyWeekDisplay: 'table-row',
+    // //   weeklyWeekHeight: 'auto'
+    // // };
+    // // console.log(JSON.stringify(eventMoreArray.value));
+
+    // const weeklyCollection = document.getElementsByClassName("v-calendar-weekly");
+    // const eventCollection = document.getElementsByClassName("v-event");
+    // // const weeklyWeekCollection = document.getElementsByClassName("v-calendar-weekly__week");
+    // // const weeklyDayCollection = document.getElementsByClassName("v-calendar-weekly__day");
+    // const c = weeklyCollection;
+    // for (let i = 0; i < c.length; i++) {
+    //   c[i].style.removeProperty('display');
+    //   c[i].cssText += "display: table;";
+    // }
+
+    // c = eventCollection;
+    // for (let i = 0; i < c.length; i++) {
+    //   c[i].style.removeProperty('display');
+    // }
+  // };
+
+  // const eMore = ref(false);
+
+  const eventColor = (event) => {
+    const needDate = dayjs(event.end);
+    const diff = needDate.diff(dayjs(), 'day');
+    var color;
+    
+    console.log(diff);
+    if (diff < 0) {
+      color = 'red darken-1';
+    } else if (diff < 7) {
+      color = 'orange darken-1';
+    } else if (diff < 14) {
+      color = 'yellow darken-2';
+    } else if (diff < 21) {
+      color = 'lime darken-1';
+    } else if (diff < 28) {
+      color = 'light-green darken-1';
+    } else {
+      color = 'green lighten-1'
+    }
+
+    return color;
+  }
+  
   // Computed
   
   const numberOfPages = computed(() => {
@@ -654,10 +714,18 @@
       return event;
     });
 
-    console.log('sE');
-    console.log(JSON.stringify(sE));
+    // console.log('sE');
+    // console.log(JSON.stringify(sE));
     return sE;
   });
+
+  // const eventMoreArray = ref({
+  //   weeklyDayOverflowY: 'clip;',
+  //   weeklyDisplay: 'grid;',
+  //   weeklyTableLayout: 'initial;',
+  //   weeklyWeekDisplay: 'grid;',
+  //   weeklyWeekHeight: 'initial;',
+  // });
 </script>
 
 <style scoped>
@@ -666,5 +734,9 @@
   }
   .v-select.fit  .v-select__selection--comma {
       text-overflow: unset;
+  }
+  .v-calendar-weekly {
+    display: table;
+    table-layout: fixed;
   }
 </style>

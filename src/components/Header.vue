@@ -33,6 +33,7 @@
       background-color="transparent"
       borderless
       rounded
+      mandatory
       color="pink darken-6"
     >
       <v-btn
