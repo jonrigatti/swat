@@ -15,7 +15,7 @@
                 </template>
                 <v-card>
                     <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".item" handle=".handle" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
-                        <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === submittalProp._id ? 'item cyan darken-4 draggable-item handle' : 'item nondraggable-item'">
+                        <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === submittalProp._id ? `item ${color} draggable-item handle` : 'item nondraggable-item'">
                             {{ index + 1 }}. {{s.submittal.submittalID}}
                         </v-col>
                     </draggable>
@@ -38,7 +38,7 @@
                 </template>
                 <v-card>
                     <draggable v-model="project.prioritySubmittals" :group="project.name + 'Submittals'" draggable=".draggable-item" handle=".handle" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
-                    <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === submittalProp._id ? 'item cyan darken-4 draggable-item handle' : 'item nondraggable-item'">
+                    <v-col v-for="(s, index) in project.prioritySubmittals" :key="s.submittal._id" :class="s.submittal._id === submittalProp._id ? `item ${color} draggable-item handle` : 'item nondraggable-item'">
                         {{ index + 1 }}. {{s.submittal.submittalID}}
                     </v-col>
                     </draggable>
@@ -46,7 +46,7 @@
 
                 <v-card>
                     <draggable v-model="project.unrankedSubmittals" :group="project.name + 'Submittals'" draggable=".draggable-item" sort="true" @change="sortUpdate(project)" animation="250" easing="cubic-bezier(1, 0, 0, 1)" ghostClass="ghost">
-                        <v-col v-for="s in project.unrankedSubmittals" :key="s.submittal.submittalID" :class="s.submittal._id === submittalProp._id ? 'item cyan darken-4 draggable-item handle' : 'item nondraggable-item'" v-show="s.submittal._id === submittalProp._id">
+                        <v-col v-for="s in project.unrankedSubmittals" :key="s.submittal.submittalID" :class="s.submittal._id === submittalProp._id ? `item ${color} draggable-item handle` : 'item nondraggable-item'" v-show="s.submittal._id === submittalProp._id">
                             {{s.submittal.submittalID}}
                         </v-col>
                     </draggable>
@@ -63,6 +63,10 @@
 
     const props = defineProps({
         submittalProp: {},
+        color: {
+            type: String,
+            default: 'cyan darken-4'
+        }
     });
 
     const projects = useProjectsStore();

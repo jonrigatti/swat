@@ -245,7 +245,7 @@
                     lg="3"
                     
                   >
-                    <Submittal :submittal="item" />
+                    <Submittal :submittal="item" :color="submittalColor(item)"/>
                   </v-col>
                 </v-row>
               </template>
@@ -326,6 +326,10 @@
         show-expand
         :expanded.sync="expanded"
       >
+      <template v-slot:item.submittalID="{ item }">
+        <v-sheet :color="submittalColor(item)" rounded class="d-flex justify-center pa-1 ma-0">{{ item.submittalID }}</v-sheet>
+      </template>
+
         <template v-slot:item.description="props">
           <v-edit-dialog
             :return-value.sync="props.item.description"
@@ -343,6 +347,10 @@
           </v-edit-dialog>          
         </template>
 
+        <template v-slot:item.receivedDate="{ item }">
+          <Datepicker :dateProp="item.receivedDate" iconProp="mdi-calendar-today" @update-date="(date) => item.receivedDate = date" />
+        </template>
+
         <template v-slot:item.needDate="{ item }">
           <Datepicker :dateProp="item.needDate" iconProp="mdi-calendar-clock" @update-date="(date) => item.needDate = date" />
         </template>
@@ -352,7 +360,7 @@
         </template>
 
         <template v-slot:item.priority="{ item }">  
-          <PriorityMenu :submittalProp="item" />
+          <PriorityMenu :submittalProp="item" :color="submittalColor(item)"/>
         </template>
 
         <template v-slot:item.save="{ item }">
@@ -441,7 +449,7 @@
                 </v-menu>
               </v-toolbar>
             </v-sheet>
-            <v-sheet height="1000">
+            <v-sheet>
               <v-calendar
                 ref="calendar"
                 v-model="calendarDate"
@@ -461,7 +469,7 @@
                 offset-overflow
                 max-width="600"
               >
-                <Submittal :submittal="selectedEvent.submittal" />
+                <Submittal :submittal="selectedEvent.submittal" :color="eventColor(selectedEvent)" />
               </v-menu>
             </v-sheet>
           </v-col>
@@ -486,6 +494,7 @@
   // import filter from 'lodash/filter';
   import { filter } from 'smart-array-filter';
   import dayjs from 'dayjs';
+  import _ from 'lodash';
 
   const submittals = useSubmittalsStore();
 
@@ -622,27 +631,38 @@
   // const eMore = ref(false);
 
   const eventColor = (event) => {
-    const needDate = dayjs(event.end);
+    if(JSON.stringify(event) === '{}') {
+      return '';
+    } else {
+      return submittalColor(event.submittal);
+    }
+  }
+
+  const submittalColor = (submittal) => {
+    console.log(JSON.stringify(submittal));
+    const needDate = dayjs(submittal.needDate);
     const diff = needDate.diff(dayjs(), 'day');
     var color;
     
-    console.log(diff);
     if (diff < 0) {
       color = 'red darken-1';
     } else if (diff < 7) {
-      color = 'orange darken-1';
+      color = 'deep-orange darken-1';
     } else if (diff < 14) {
-      color = 'yellow darken-2';
+      color = 'orange darken-1';
     } else if (diff < 21) {
-      color = 'lime darken-1';
+      color = 'amber darken-1';
     } else if (diff < 28) {
       color = 'light-green darken-1';
     } else {
-      color = 'green lighten-1'
+      color = 'green darken-1'
     }
+
+    (submittal.dispositionDate != null) && (color = 'grey darken-2');
 
     return color;
   }
+  
   
   // Computed
   
@@ -682,9 +702,11 @@
           if (Array.isArray(value))
           {
             fS = filter(fS, {
-              keywords: `${value}`,
+              // Check if the array is empty, and if not, filter by "key: value" with brackets removed from the value array (["blah", "blah2"] --> "blah", "blah2")
+              keywords: `${value.length > 0 ? key + ':' : ''}${JSON.stringify(value).replace('[','').replace(']','')}`,
               predicate: 'OR'
             })
+            // console.log(`${value.length > 0 ? key + ':' : ''}${JSON.stringify(value).replace('[','').replace(']','')}`);
           } else {
             fS = fS.filter(submittal => submittal[key]===value);
           }
@@ -714,9 +736,7 @@
       return event;
     });
 
-    // console.log('sE');
-    // console.log(JSON.stringify(sE));
-    return sE;
+    return _.sortBy(sE, ['name', 'start', 'end']);
   });
 
   // const eventMoreArray = ref({

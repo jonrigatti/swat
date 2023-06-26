@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-card shaped>
-            <v-card-title class="cyan pa-2">
+            <v-card-title :class="`${color} pa-2`">
                 <h2>{{ submittal.submittalID }}</h2>
                 <v-spacer></v-spacer>
                 <v-btn icon @click="(v) => expanded = !expanded" >
@@ -16,7 +16,7 @@
                             <v-text-field v-model.lazy="submittal.owner" label="Owner"></v-text-field>
                             <div>
                                 Priority
-                                <PriorityMenu :submittalProp="submittal" />
+                                <PriorityMenu :submittalProp="submittal" :color="color"/>
                             </div>
                         </v-col>
                         <v-col>
@@ -81,7 +81,13 @@
     import { ref, computed } from 'vue';
 
     const props = defineProps({
-        submittal: {}
+        submittal: {},
+        color: {
+            type: String,
+            default: function () {
+                return 'cyan'
+            }
+        }
     });
 
     const submittals = useSubmittalsStore();
