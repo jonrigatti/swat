@@ -9,7 +9,7 @@
         </v-row>
         <v-row>
           <v-col>
-              <v-toolbar dark color="purple darken-3" class="mb-0" v-if="app.submittalView==='cards'">
+              <v-toolbar dark color="purple darken-3" class="mb-0 d-flex justify-start" v-if="app.submittalView==='cards'">
                 <v-text-field
                   v-model="search"
                   clearable
@@ -18,6 +18,7 @@
                   hide-details
                   prepend-inner-icon="mdi-magnify"
                   label="Filter"
+                  class="pr-1"
                 ></v-text-field>
                 <template>
                   <v-spacer></v-spacer>
@@ -111,7 +112,7 @@
                           >
                             None
                           </v-btn>
-                          {{ submittalFilter.owner }}
+                          <!-- {{ submittalFilter.owner }} -->
                         </v-row>
                         <v-row class="d-inline-flex flex-wrap">
                           <v-item-group
@@ -255,7 +256,7 @@
                   align="center"
                   justify="center"
                 >
-                  <span class="grey--text">Items per page</span>
+                  <span class="grey--text">Submittals per page</span>
                   <v-menu offset-y>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
@@ -318,7 +319,7 @@
     <v-container fluid class="py-0 my-0" v-if="app.submittalView === 'table'">
       <v-data-table
         :headers="headers"
-        :items="submittals.submittals"
+        :items="filteredSubmittals"
         item-key="submittalID"
         :sort-by="['submittalID', 'owner']"
         :sort-desc="[false, true]"
@@ -414,39 +415,6 @@
                     mdi-chevron-right
                   </v-icon>
                 </v-btn>
-                <v-spacer></v-spacer>
-                <v-menu
-                  bottom
-                  right
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      outlined
-                      color="grey darken-2"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      <span>mdi-menu-down</span>
-                      <v-icon right>
-                        mdi-menu-down
-                      </v-icon>
-                    </v-btn>
-                  </template>
-                  <v-list>
-                    <v-list-item>
-                      <v-list-item-title>Day</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-title>Week</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-title>Month</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-title>4 days</v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
               </v-toolbar>
             </v-sheet>
             <v-sheet>
@@ -594,42 +562,6 @@
         nativeEvent.stopPropagation()
       };
 
-  // const showMore = () => {    
-    // // if(eMore.value == 'flex') {
-    // //   eMore.value = 'table';
-    // // }
-    // // else {
-    // //   eMore.value = 'flex';
-    // // }
-
-    // eMore.value = !eMore.value
-    // // eventMoreArray.value = {
-    // //   weeklyDayOverflowY: 'auto',
-    // //   weeklyDisplay: 'grid',
-    // //   weeklyTableLayout: 'fixed',
-    // //   weeklyWeekDisplay: 'table-row',
-    // //   weeklyWeekHeight: 'auto'
-    // // };
-    // // console.log(JSON.stringify(eventMoreArray.value));
-
-    // const weeklyCollection = document.getElementsByClassName("v-calendar-weekly");
-    // const eventCollection = document.getElementsByClassName("v-event");
-    // // const weeklyWeekCollection = document.getElementsByClassName("v-calendar-weekly__week");
-    // // const weeklyDayCollection = document.getElementsByClassName("v-calendar-weekly__day");
-    // const c = weeklyCollection;
-    // for (let i = 0; i < c.length; i++) {
-    //   c[i].style.removeProperty('display');
-    //   c[i].cssText += "display: table;";
-    // }
-
-    // c = eventCollection;
-    // for (let i = 0; i < c.length; i++) {
-    //   c[i].style.removeProperty('display');
-    // }
-  // };
-
-  // const eMore = ref(false);
-
   const eventColor = (event) => {
     if(JSON.stringify(event) === '{}') {
       return '';
@@ -728,7 +660,7 @@
     const sE = filteredSubmittals.value.map(submittal => {
       const event = {};
 
-      event.name = submittal.submittalID;
+      event.name = `${submittal.submittalID} ${submittal.description != '' ? '-' : ''} ${submittal.description}`;
       event.start = dayjs(submittal.receivedDate).format('YYYY-MM-DD');
       event.end = dayjs(submittal.needDate).format('YYYY-MM-DD');
       event.submittal = submittal;

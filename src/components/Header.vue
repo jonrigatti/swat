@@ -16,7 +16,10 @@
 
     <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
-    <v-app-bar-title class="title">{{ title }}</v-app-bar-title>
+    <v-app-bar-title class="title">
+      Submittal Workflow and Tracking
+      <v-icon>mdi-bug-outline</v-icon>
+    </v-app-bar-title>
 
     <v-spacer></v-spacer>
 
@@ -71,18 +74,9 @@
 </template>
 
 <script setup>
-  // import { ref } from 'vue';
-  // import router from '@/router';
   import { useAppStore } from '../stores/AppStore';
 
   const app = useAppStore();
-  
-  const title = "Submittal Workflow and Tracking";
-  // const submittalview = ref('cards');
-  // const toggleSubmittalView = (view) => {
-  //       submittalview.value = view;
-  //       router.push({ path: '/submittals/'+view });
-  //   }
 </script>
 
 <style scoped>
@@ -90,5 +84,6 @@
   flex-grow: 10;
   color: var(--text-reverse);
   text-overflow: show;
+  user-select: none;
 }
 </style>

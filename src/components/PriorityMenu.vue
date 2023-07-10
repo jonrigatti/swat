@@ -1,5 +1,7 @@
 <template>
     <div>
+        <div v-if="!((Array.isArray(isRanked) && isRanked.length) || (Array.isArray(isUnranked) && isUnranked.length))">Not assigned to project</div>
+        <div v-else-if="showLabel">Priority</div>
         <span v-for="project in isRanked" :key="project._id">
             <v-menu
                 offset-y
@@ -59,13 +61,17 @@
 <script setup>    
     import draggable from 'vuedraggable';
     import { useProjectsStore } from '../stores/ProjectsStore';
-    import { ref, computed } from 'vue';
+    import { computed } from 'vue';
 
     const props = defineProps({
         submittalProp: {},
         color: {
             type: String,
             default: 'cyan darken-4'
+        },
+        showLabel: {
+            type: Boolean,
+            default: false
         }
     });
 
@@ -78,14 +84,6 @@
         projects.updateSubmittalPriorities(project);
         // emit('update-submittal-priorities', project)
     }
-    // Data
-    // const dateMenu = ref(false);
-    
-    // const dateConst = ref(dayjs(props.dateProp).isValid() ? dayjs(props.dateProp).format('YYYY-MM-DD').toString() : '');
-
-    // const deleteDialog = ref(false);
-
-    // Computed
 
     const isRanked = computed(() => {
         var iR = [];
@@ -109,18 +107,6 @@
         });
         return iR;
     });
-    // const deleteDate = () => {
-    //     // props.dateProp = null;
-    //     emit('update-date', null);
-    // }
-
-    // const selectDate = (date) => {
-    //     dateMenu.value = false;
-    //     deleteDialog.value = false;
-    //     // props.dateProp = dayjs(date).toISOString();
-    //     emit('update-date', dayjs(date).toISOString());
-    // }
-    // const emit = defineEmits(['update-date']);
 </script>
 
 <style scoped>

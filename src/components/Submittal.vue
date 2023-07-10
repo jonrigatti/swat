@@ -14,10 +14,7 @@
                     <v-row>
                         <v-col>
                             <v-text-field v-model.lazy="submittal.owner" label="Owner"></v-text-field>
-                            <div>
-                                Priority
-                                <PriorityMenu :submittalProp="submittal" :color="color"/>
-                            </div>
+                            <PriorityMenu :submittalProp="submittal" :color="color" :showLabel="true"/>
                         </v-col>
                         <v-col>
                             <Datepicker :dateProp="submittal.receivedDate" labelProp="Received Date" iconProp="mdi-calendar-today" @update-date="(date) => submittal.receivedDate = date" />

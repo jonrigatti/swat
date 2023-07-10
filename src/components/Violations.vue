@@ -135,128 +135,128 @@
 				persistent
 				max-width="600px"
 			>
-			<template v-slot:activator="{ on, attrs }">
-				<v-btn
-					icon
-					v-bind="attrs"
-					v-on="on"
-					class="pa-6"
-				>
-					<v-icon>mdi-alert-plus</v-icon>
-				</v-btn>
-			</template>
-			<v-card>
-				<v-card-title>
-				<span class="text-h5">New Violation</span>
-				</v-card-title>
-				<v-card-text>
-				<v-container>
-					<v-row dense>
-						<v-col cols="12">
-							<v-btn-toggle
-								v-model="referenceType"
-								tile
-								group
-								mandatory
-							>
-								<v-btn value="code">Code</v-btn>
-								<v-btn value="drawing">Drawing</v-btn>
-							</v-btn-toggle>
-						</v-col>
-						<v-col cols="12">
-							<v-autocomplete
-								:items="['Skiing', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Foosball']"
-								label="Category"
-								multiple
-								required
-								v-model="newViolation.category"
-							></v-autocomplete>
-						</v-col>
-						<v-col cols="12">
-							<v-text-field
-								label="Limit"
-								required
-								v-model.number="newViolation.limit"
-							></v-text-field>
-						</v-col>
-						<v-col cols="12">
-							<v-text-field
-								label="Actual"
-								required
-								v-model.number="newViolation.actual"
-							></v-text-field>
-						</v-col>         
-						<v-col cols="12" v-if="referenceType==='code'">
-							<v-text-field
-								label="Chapter"
-								required
-								v-model="newViolation.reference.chapter"
-							></v-text-field>
-						</v-col>               
-						<v-col cols="12" v-if="referenceType==='code'">
-							<v-text-field
-								label="Paragraph"
-								required                                
-								v-model="newViolation.reference.paragraph"
-							></v-text-field>
-						</v-col>
-						<v-col cols="12" v-if="referenceType==='drawing'">
-							<v-text-field
-								label="Drawing"
-								required
-								v-model="newViolation.reference.drawing"
-							></v-text-field>
-						</v-col>
-						<v-col cols="12" v-if="referenceType==='drawing'">
-							<v-text-field
-								label="Coordinates"
-								required                                
-								v-model="newViolation.reference.coordinates"
-							></v-text-field>
-						</v-col>
-						<v-col cols="12">
-							<v-text-field
-								label="Revision"
-								required                                
-								v-model.number="newViolation.reference.revision"
-							></v-text-field>
-						</v-col>
-						<v-col cols="12">
-							<v-text-field
-								label="Date"
-								required                                
-								v-model="newViolation.reference.date"
-							></v-text-field>
-						</v-col>
-					</v-row>
-				</v-container>
-				<small>*indicates required field</small>
-				</v-card-text>
-				<v-card-actions>
-				<v-spacer></v-spacer>
-				<v-btn
-					color="red darken-1"
-					text
-					@click="dialog = false"
-				>
-					Close
-				</v-btn>
-				<v-btn
-					color="green darken-1"
-					text
-					@click="addViolation()"
-				>
-					Save
-				</v-btn>
-				</v-card-actions>
-			</v-card>
+				<template v-slot:activator="{ on, attrs }">
+					<v-btn
+						icon
+						v-bind="attrs"
+						v-on="on"
+						class="pa-6"
+					>
+						<v-icon>mdi-alert-plus</v-icon>
+					</v-btn>
+				</template>
+				<v-card>
+					<v-card-title>
+					<span class="text-h5">New Violation</span>
+					</v-card-title>
+					<v-card-text>
+					<v-container>
+						<v-row dense>
+							<v-col cols="12">
+								<v-btn-toggle
+									v-model="referenceType"
+									tile
+									group
+									mandatory
+								>
+									<v-btn value="code">Code</v-btn>
+									<v-btn value="drawing">Drawing</v-btn>
+								</v-btn-toggle>
+							</v-col>
+							<v-col cols="12">
+								<v-autocomplete
+									:items="['Skiing', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Foosball']"
+									label="Category"
+									multiple
+									required
+									v-model="newViolation.category"
+								></v-autocomplete>
+							</v-col>
+							<v-col cols="12">
+								<v-text-field
+									label="Limit"
+									required
+									v-model.number="newViolation.limit"
+								></v-text-field>
+							</v-col>
+							<v-col cols="12">
+								<v-text-field
+									label="Actual"
+									required
+									v-model.number="newViolation.actual"
+								></v-text-field>
+							</v-col>         
+							<v-col cols="12" v-if="referenceType==='code'">
+								<v-text-field
+									label="Chapter"
+									required
+									v-model="newViolation.reference.chapter"
+								></v-text-field>
+							</v-col>               
+							<v-col cols="12" v-if="referenceType==='code'">
+								<v-text-field
+									label="Paragraph"
+									required                                
+									v-model="newViolation.reference.paragraph"
+								></v-text-field>
+							</v-col>
+							<v-col cols="12" v-if="referenceType==='drawing'">
+								<v-text-field
+									label="Drawing"
+									required
+									v-model="newViolation.reference.drawing"
+								></v-text-field>
+							</v-col>
+							<v-col cols="12" v-if="referenceType==='drawing'">
+								<v-text-field
+									label="Coordinates"
+									required                                
+									v-model="newViolation.reference.coordinates"
+								></v-text-field>
+							</v-col>
+							<v-col cols="12">
+								<v-text-field
+									label="Revision"
+									required                                
+									v-model.number="newViolation.reference.revision"
+								></v-text-field>
+							</v-col>
+							<v-col cols="12">
+								<v-text-field
+									label="Date"
+									required                                
+									v-model="newViolation.reference.date"
+								></v-text-field>
+							</v-col>
+						</v-row>
+					</v-container>
+					<small>*indicates required field</small>
+					</v-card-text>
+					<v-card-actions>
+					<v-spacer></v-spacer>
+					<v-btn
+						color="red darken-1"
+						text
+						@click="dialog = false"
+					>
+						Close
+					</v-btn>
+					<v-btn
+						color="green darken-1"
+						text
+						@click="addViolation()"
+					>
+						Save
+					</v-btn>
+					</v-card-actions>
+				</v-card>
 			</v-dialog>
 		</v-row>
 	</div>
 </template>
 
 <script setup>	
-	import { useSubmittalsStore } from '../stores/SubmittalsStore'
+	// import { useSubmittalsStore } from '../stores/SubmittalsStore'
 	import { ref, computed } from 'vue'
 
 	const props = defineProps({
@@ -303,17 +303,7 @@
 		}
 		
 		emit('add-violation', nv)
-
-    // submittals.submittals.find(submittal => submittal._id === filteredSubmittals.value[index]._id).violations.push(violation)
-
 	}
-
-	// const addQueryField = () => {
-	// 	if(queryFields.value.length == 0 || queryFields.value[queryFields.value.length - 1].value != ''){
-	// 	queryFields.value.push({ key: '', value: '', andOr: 'and', operator: '$eq' })
-	// 	}
-  	// }
-
 
 	// export default {
 	// 	name: "Violations",
