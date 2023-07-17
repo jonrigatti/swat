@@ -471,7 +471,7 @@
   const app = useAppStore();
 
   // console.log(JSON.stringify(submittals.submittals));
-  console.log(JSON.stringify(projects.projects));
+  // console.log(JSON.stringify(projects.projects));
 
   // Data
   const calendar = ref(null);
@@ -571,7 +571,7 @@
   }
 
   const submittalColor = (submittal) => {
-    console.log(JSON.stringify(submittal));
+    // console.log(JSON.stringify(submittal));
     const needDate = dayjs(submittal.needDate);
     const diff = needDate.diff(dayjs(), 'day');
     var color;
