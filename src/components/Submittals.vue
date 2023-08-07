@@ -43,182 +43,176 @@
                 </template>
               </v-toolbar>
               <v-sheet color="purple darken-2" class="d-flex flex-wrap justify-start pa-2 mb-1" style="width: 100%;">
-
-                    <div class="pa-1">
+                <div class="pa-1">
+                  <v-btn-toggle
+                    v-model="projectFilter"
+                    dense
+                    background-color="primary"
+                    dark
+                    multiple
+                  >
+                    <v-btn
+                      color="purple"
+                      v-for="project in projects.projects"
+                      :key="project.name"
+                      :value="project.name"
+                    >
+                      {{ project.name }}
+                    </v-btn>
+                  </v-btn-toggle>
+                  <v-btn
+                    dense
+                    color="red darken-3"
+                    @click="() => projectFilter = ['A', 'B', 'C', 'D']"
+                  >
+                    All
+                  </v-btn>                
+                  <v-btn
+                    dense
+                    color="red darken-3"
+                    @click="() => projectFilter = []"
+                  >
+                    None
+                  </v-btn>
+                </div>
+                <div class="pa-1">
+                  <v-container>
+                    <v-row>
                       <v-btn-toggle
-                        v-model="projectFilter"
+                        v-model="unitSelect"
+                        multiple
                         dense
                         background-color="primary"
                         dark
-                        multiple
                       >
                         <v-btn
-                          color="purple"
-                          v-for="project in projects.projects"
-                          :key="project.name"
-                          :value="project.name"
+                          color="yellow darken-3"
+                          v-for="unit in units"
+                          :key="unit"
+                          :value="unit"
                         >
-                          {{ project.name }}
+                          {{ unit }}
                         </v-btn>
                       </v-btn-toggle>
                       <v-btn
                         dense
                         color="red darken-3"
-                        @click="() => projectFilter = ['A', 'B', 'C', 'D']"
+                        @click="() => submittalFilter.owner = filteredOwners.map(o => o.name)"
+                        v-show="unitSelect != ''"
                       >
                         All
-                      </v-btn>                
+                      </v-btn>
                       <v-btn
                         dense
                         color="red darken-3"
-                        @click="() => projectFilter = []"
+                        @click="() => submittalFilter.owner = []"
+                        v-show="unitSelect != ''"
                       >
                         None
                       </v-btn>
-                    </div>
-
-                    <div class="pa-1">
-                      <v-container>
-                        <v-row>
-                          <v-btn-toggle
-                            v-model="unitSelect"
-                            multiple
-                            dense
-                            background-color="primary"
-                            dark
-                          >
-                            <v-btn
-                              color="yellow darken-3"
-                              v-for="unit in units"
-                              :key="unit"
-                              :value="unit"
-                            >
-                              {{ unit }}
-                            </v-btn>
-                          </v-btn-toggle>
+                      <!-- {{ submittalFilter.owner }} -->
+                    </v-row>
+                    <v-row class="d-inline-flex flex-wrap">
+                      <v-item-group
+                        v-model="submittalFilter.owner"
+                        dense
+                        background-color="primary"
+                        multiple
+                        dark
+                      >
+                        <v-item
+                          v-for="owner in filteredOwners.sort(function(o1, o2) {return o1.name.substring(o1.name.indexOf(' ') + 1).localeCompare(o2.name.substring(o2.name.indexOf(' ') + 1))})"
+                          :key="owner.name"
+                          :value="owner.name"
+                          v-slot="{ active, toggle }"
+                        >
                           <v-btn
-                            dense
-                            color="red darken-3"
-                            @click="() => submittalFilter.owner = filteredOwners.map(o => o.name)"
-                            v-show="unitSelect != ''"
+                            color="green"
+                            class="pa-1 ma-1 text-capitalize"
+                            active-class="black--text"
+                            :input-value="active"
+                            small
+                            @click="toggle"
                           >
-                            All
+                            {{ owner.name.substring(owner.name.indexOf(' ') + 1) }}
                           </v-btn>
-                          <v-btn
-                            dense
-                            color="red darken-3"
-                            @click="() => submittalFilter.owner = []"
-                            v-show="unitSelect != ''"
-                          >
-                            None
-                          </v-btn>
-                          <!-- {{ submittalFilter.owner }} -->
-                        </v-row>
-                        <v-row class="d-inline-flex flex-wrap">
-                          <v-item-group
-                            v-model="submittalFilter.owner"
-                            dense
-                            background-color="primary"
-                            multiple
-                            dark
-                          >
-                            <v-item
-                              v-for="owner in filteredOwners.sort(function(o1, o2) {return o1.name.substring(o1.name.indexOf(' ') + 1).localeCompare(o2.name.substring(o2.name.indexOf(' ') + 1))})"
-                              :key="owner.name"
-                              :value="owner.name"
-                              v-slot="{ active, toggle }"
-                            >
-                              <v-btn
-                                color="green"
-                                class="pa-1 ma-1 text-capitalize"
-                                active-class="black--text"
-                                :input-value="active"
-                                small
-                                @click="toggle"
-                              >
-                                {{ owner.name.substring(owner.name.indexOf(' ') + 1) }}
-                              </v-btn>
-                            </v-item>
-                          </v-item-group>
-                        </v-row>
-                      </v-container>
-                    </div>
-
-                    <div class="d-flex">
-                      <div class="pa-1">
-                        <v-btn-toggle
-                          dense
-                          background-color="primary"
-                          exclusive
-                          v-model="submittalFilter.peerReviewNeeded"
-                        >                    
-                        <v-btn
-                            dense
-                            color="red darken-3"
-                            :value="true"
-                          >
-                            Peer Needed
-                          </v-btn>
-                          <v-btn
-                            dense
-                            color="red darken-3"
-                            :value="false"
-                          >
-                            Peer Assigned
-                          </v-btn>
-                        </v-btn-toggle>
-                      </div>
-
-                      <div class="pa-1">
-                        <v-btn-toggle
-                          dense
-                          background-color="primary"
-                          exclusive
-                          v-model="submittalFilter.nrInformed"
-                        >                    
-                          <v-btn
-                            dense
-                            color="blue darken-3"
-                            :value="true"
-                          >
-                            NR Informed
-                          </v-btn>
-                          <v-btn
-                            dense
-                            color="blue darken-3"
-                            :value="false"
-                          >
-                            NR Uninformed
-                          </v-btn>
-                        </v-btn-toggle>
-                      </div>
-
-                      <div class="pa-1">
-                        <v-btn-toggle
-                          dense
-                          background-color="primary"
-                          exclusive
-                          v-model="submittalFilter.open"
-                        >                    
-                          <v-btn
-                            dense
-                            color="orange darken-3"
-                            :value="true"
-                          >
-                            Open
-                          </v-btn>
-                          <v-btn
-                            dense
-                            color="orange darken-3"
-                            :value="false"
-                          >
-                            Closed
-                          </v-btn>
-                        </v-btn-toggle>
-                      </div>
-                    </div>
-
-                    <!-- {{ submittals.submittals.map(function(s) { u = Math.floor(Math.random()*units.length); n = {name: s.owner, unit: units[u], subdivision: subdivisions[Math.round(u/2)]}; return n;}) }} -->
+                        </v-item>
+                      </v-item-group>
+                    </v-row>
+                  </v-container>
+                </div>
+                <div class="d-flex">
+                  <div class="pa-1">
+                    <v-btn-toggle
+                      dense
+                      background-color="primary"
+                      exclusive
+                      v-model="submittalFilter.peerReviewNeeded"
+                    >                    
+                    <v-btn
+                        dense
+                        color="red darken-3"
+                        :value="true"
+                      >
+                        Peer Needed
+                      </v-btn>
+                      <v-btn
+                        dense
+                        color="red darken-3"
+                        :value="false"
+                      >
+                        Peer Assigned
+                      </v-btn>
+                    </v-btn-toggle>
+                  </div>
+                  <div class="pa-1">
+                    <v-btn-toggle
+                      dense
+                      background-color="primary"
+                      exclusive
+                      v-model="submittalFilter.nrInformed"
+                    >                    
+                      <v-btn
+                        dense
+                        color="blue darken-3"
+                        :value="true"
+                      >
+                        NR Informed
+                      </v-btn>
+                      <v-btn
+                        dense
+                        color="blue darken-3"
+                        :value="false"
+                      >
+                        NR Uninformed
+                      </v-btn>
+                    </v-btn-toggle>
+                  </div>
+                  <div class="pa-1">
+                    <v-btn-toggle
+                      dense
+                      background-color="primary"
+                      exclusive
+                      v-model="submittalFilter.open"
+                    >                    
+                      <v-btn
+                        dense
+                        color="orange darken-3"
+                        :value="true"
+                      >
+                        Open
+                      </v-btn>
+                      <v-btn
+                        dense
+                        color="orange darken-3"
+                        :value="false"
+                      >
+                        Closed
+                      </v-btn>
+                    </v-btn-toggle>
+                  </div>
+                </div>
+                <!-- {{ submittals.submittals.map(function(s) { u = Math.floor(Math.random()*units.length); n = {name: s.owner, unit: units[u], subdivision: subdivisions[Math.round(u/2)]}; return n;}) }} -->
               </v-sheet>
           </v-col>
         </v-row>
