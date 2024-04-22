@@ -54,7 +54,7 @@ class SubmittalDataService {
                     if(i.operator == "$eq") {
                         var nextDay = dayjs(i.value).add(1, 'day').startOf('day');
                         queryString += `&$${i.andOr}[${j}][${i.key.name}][$gte]=${i.value}`;
-                        queryString += `&$${i.andOr}[${j}][${i.key.name}][$lt]=${nextDay.toString()}`;
+                        queryString += `&$${i.andOr}[${j}][${i.key.name}][$lt]=${nextDay.toISOString()}`;
                     }
                     else {
                         queryString += `&$${i.andOr}[${j}][${i.key.name}][${i.operator}]=${i.value}`;

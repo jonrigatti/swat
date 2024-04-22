@@ -1,3 +1,3 @@
 module.exports = {
-    url: "mongodb://127.0.0.1:27017/swat"
+    url: "mongodb://JON:Swattesting1@g74461a73d7783b-jswat.adb.us-ashburn-1.oraclecloudapps.com:27017/jon?authMechanism=PLAIN&authSource=$external&ssl=true&loadBalanced=true&retryWrites=false"
 }

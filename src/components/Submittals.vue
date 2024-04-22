@@ -9,7 +9,7 @@
         </v-row>
         <v-row>
           <v-col>
-              <v-toolbar dark color="purple darken-3" class="mb-0 d-flex justify-start" v-if="app.submittalView==='cards'">
+              <v-toolbar dark color="purple darken-3" class="mb-0 d-flex justify-start"  v-if="app.submittalView==='cards'">
                 <v-text-field
                   v-model="search"
                   clearable

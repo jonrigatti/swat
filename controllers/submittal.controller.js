@@ -87,6 +87,9 @@ exports.update = (req, res) => {
 
     const id = req.params.id;
 
+    delete req.body.id;
+    delete req.body._id;
+
     Submittals.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
         .then(data => {
             if (!data) {
@@ -97,7 +100,7 @@ exports.update = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: `Error updating submittal with id ${id}`
+                message: `Error updating submittal with id ${id}. ${err.message}`
             });
         });
 };
@@ -182,7 +185,7 @@ exports.findByViolation = (req, res) => {
 // Find open submittals
 exports.findOpen = (req, res) => {
     // const v = req.params.violation;
-    // console.log('Find open submittals');
+    console.log('Find open submittals');
 
     Submittals.find({
         $or: [{
@@ -195,7 +198,8 @@ exports.findOpen = (req, res) => {
     .then(data => {
         const withVirtuals = []
         data.forEach(d => withVirtuals.push(d.toJSON({virtuals: true})));
-        res.send(withVirtuals);;
+        // console.log(data);
+        res.send(withVirtuals);
     })
     .catch(err => {
         res.status(500).send({
@@ -208,7 +212,7 @@ exports.findOpen = (req, res) => {
 // Find closed submittals
 exports.findClosed = (req, res) => {
     // const v = req.params.violation;
-    // console.log('Find open submittals');
+    console.log('Find closed submittals');
 
     Submittals.find({ dispositionDate: { $ne: null } })
     .then(data => {
@@ -219,7 +223,7 @@ exports.findClosed = (req, res) => {
     .catch(err => {
         res.status(500).send({
             message: 
-                err.message || "Some error occurred while retrieving open submittals."
+                err.message || "Some error occurred while retrieving closed submittals."
         });
     });
 };
@@ -263,7 +267,7 @@ exports.findDynamic = (req, res) => {
     .catch(err => {
         res.status(500).send({
             message: 
-                err.message || "Some error occurred while retrieving open submittals."
+                err.message || "Some error occurred while retrieving  queried submittals."
         });
     });
 };

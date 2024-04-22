@@ -39,7 +39,7 @@ exports.findAll = (req, res) => {
     .populate('unrankedSubmittals.submittal', 'submittalID description needDate')    
     // .populate('unrankedSubmittals', ['submittalID', 'description', 'needDate'])
     .then(data => {
-        // console.log(JSON.stringify(data));
+        console.log(JSON.stringify(data));
         res.send(data);
     })
     .catch(err => {
@@ -78,6 +78,9 @@ exports.update = (req, res) => {
     console.log(req.body);
 
     const id = req.params.id;
+
+    delete req.body.id;
+    delete req.body._id;
 
     Projects.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
         .then(data => {
